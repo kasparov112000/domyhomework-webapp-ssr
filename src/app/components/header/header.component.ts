@@ -10,7 +10,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     <header>
       <div class="container">
         <nav>
-          <a class="logo" routerLink="/">LearnByTesting</a>
+          <a class="logo" routerLink="/">
+            <span class="logo-icon material-icons">psychology</span>
+            <span class="logo-text">LearnByTesting</span>
+          </a>
           <ul class="nav-links">
             <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
             <li><a routerLink="/features" routerLinkActive="active">Features</a></li>
@@ -40,16 +43,39 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
     
     .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    
+    .logo-icon {
+      font-size: 32px;
+      color: #D04A02;
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .logo-text {
       font-size: 1.75rem;
       font-weight: bold;
       color: #D04A02;
       text-transform: uppercase;
       letter-spacing: 1px;
-      display: flex;
-      align-items: center;
     }
     
-    .logo:hover {
+    .logo:hover .logo-icon,
+    .logo:hover .logo-text {
       color: #B03902;
     }
     
