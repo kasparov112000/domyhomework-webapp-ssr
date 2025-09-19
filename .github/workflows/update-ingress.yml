@@ -1,0 +1,97 @@
+name: Update Ingress Configuration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'ingress/**'
+      - '.github/workflows/update-ingress.yml'
+
+env:
+  DIGITALOCEAN_CLUSTER: 3b23a2dd-3391-4d1a-a478-e2a5564de99c
+
+jobs:
+  update-ingress:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    
+    - name: Setup Kubernetes
+      run: |
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.DIGITALOCEAN_CLUSTER }}
+    
+    - name: Check current ingress
+      run: |
+        echo "Current ingress configuration:"
+        kubectl get ingress learnbytest-ingress -o yaml | grep -A10 "learnbytesting.ai" || true
+    
+    - name: Verify webapp-ssr service exists
+      run: |
+        echo "Checking webapp-ssr service..."
+        kubectl get svc webapp-ssr || echo "WARNING: webapp-ssr service not found!"
+        
+        echo ""
+        echo "Checking webapp-ssr pods..."
+        kubectl get pods -l app.kubernetes.io/name=webapp-ssr || echo "WARNING: No webapp-ssr pods found!"
+    
+    - name: Apply ingress configuration
+      run: |
+        echo "Applying ingress configuration..."
+        kubectl apply -f ingress/lbt_ingress.yaml
+        
+        echo ""
+        echo "Waiting for ingress to update..."
+        sleep 10
+    
+    - name: Verify ingress update
+      run: |
+        echo "Verifying ingress has been updated..."
+        kubectl get ingress learnbytest-ingress -o yaml | grep -A5 "learnbytesting.ai"
+        
+        echo ""
+        echo "Checking ingress controller logs (last 20 lines):"
+        kubectl logs -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx --tail=20 || true
+    
+    - name: Test endpoints
+      run: |
+        echo "Waiting 30 seconds for changes to propagate..."
+        sleep 30
+        
+        echo "Testing endpoints:"
+        echo "1. Main domain (should be SSR):"
+        curl -s -I https://learnbytesting.ai | head -10
+        
+        echo ""
+        echo "2. App subdomain (should be unchanged):"
+        curl -s -I https://app.learnbytesting.ai | head -10
+        
+        echo ""
+        echo "3. Checking for Angular SSR markers:"
+        if curl -s https://learnbytesting.ai | grep -q "app-root"; then
+          echo "✓ Found Angular app-root - SSR is working!"
+        else
+          echo "✗ Angular app-root not found - might still be serving WordPress"
+        fi
+    
+    - name: Summary
+      run: |
+        echo ""
+        echo "===== Deployment Summary ====="
+        echo "Ingress has been applied. It may take a few minutes for changes to fully propagate."
+        echo ""
+        echo "To verify:"
+        echo "1. Visit https://learnbytesting.ai in a private/incognito window"
+        echo "2. You should see the new Angular SSR landing page"
+        echo "3. View page source to confirm server-side rendering"
+        echo ""
+        echo "If still showing WordPress after 5 minutes:"
+        echo "- Check if you have CDN caching (Cloudflare, etc)"
+        echo "- Try: kubectl rollout restart deployment/ingress-nginx-controller -n ingress-nginx"
