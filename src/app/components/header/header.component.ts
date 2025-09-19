@@ -45,7 +45,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.125rem;
+      gap: 0;
       text-decoration: none;
     }
     
@@ -64,6 +64,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       direction: ltr;
       -webkit-font-feature-settings: 'liga';
       -webkit-font-smoothing: antialiased;
+      margin-right: -2px;
     }
     
     .logo-text {
