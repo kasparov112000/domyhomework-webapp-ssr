@@ -37,7 +37,7 @@ import { CommonModule } from '@angular/common';
           </div>
         </div>
         <div class="footer-bottom">
-          <p>&copy; {{ currentYear }} LearnByTesting.ai. All rights reserved.</p>
+          <p>&copy; {{ currentYear }} LearnByTesting.ai - A product of <a href="https://hypothesize.us" target="_blank" rel="noopener">Hypothesize Solutions</a>. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -105,6 +105,16 @@ import { CommonModule } from '@angular/common';
     
     .footer-bottom p {
       margin: 0;
+    }
+    
+    .footer-bottom a {
+      color: #D04A02;
+      text-decoration: none;
+      font-weight: 500;
+      
+      &:hover {
+        text-decoration: underline;
+      }
     }
   `]
 })
