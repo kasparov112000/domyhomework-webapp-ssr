@@ -1,0 +1,99 @@
+// Theme Variables for LearnByTesting SSR App
+// Based on the main webapp theme
+
+// Primary Colors
+$primary-color: #D04A02;
+$primary-color-dark: darken($primary-color, 10%);
+$primary-color-light: lighten($primary-color, 10%);
+
+// Background Colors
+$background-color-light: #fafafa;
+$background-color: #fff;
+$background-color-dark: #31393f;
+$secondary-background-color: #31393f;
+
+// Text Colors
+$text-color-primary: #D04A02;
+$text-color-dark: #333;
+$text-color-light: #fff;
+$text-color-muted: #919da8;
+$text-color-on-dark: #fff;
+
+// Sidebar Colors
+$sidebar-bg: #31393f;
+$sidebar-text: #fff;
+$sidebar-text-muted: #515253;
+$sidebar-hover-bg: rgba(26.6875, 31.0446428571, 34.3125, 1);
+$sidebar-active-border: #D04A02;
+
+// Box Shadows
+$box-shadow-primary: 0px 2px 5px rgba(0, 0, 0, 0.26);
+$box-shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+
+// Border Colors
+$border-color-light: rgba(0, 0, 0, 0.12);
+$border-color-dark: rgba(255, 255, 255, 0.1);
+
+// Button Colors
+$button-primary-bg: #D04A02;
+$button-primary-hover-bg: darken($button-primary-bg, 10%);
+$button-secondary-bg: #6c757d;
+$button-secondary-hover-bg: darken($button-secondary-bg, 10%);
+
+// Success/Error/Warning Colors
+$success-color: #d4edda;
+$success-text: #155724;
+$success-border: #c3e6cb;
+$error-color: #f8d7da;
+$error-text: #721c24;
+$error-border: #f5c6cb;
+$warning-color: #D04A02;
+$warning-border: #e6c9be;
+
+// Transitions
+$transition-fast: 0.2s ease-in-out;
+$transition-medium: 0.3s ease-in-out;
+$transition-slow: 0.4s ease-in-out;
+
+// Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-full: 50%;
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-xxl: 3rem;
+
+// Font Family
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-monospace: 'Courier New', monospace;
+
+// Font Sizes
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-xxl: 1.5rem;
+$font-size-xxxl: 2rem;
+$font-size-display: 4rem;
+
+// Font Weights
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Z-index
+$z-index-dropdown: 1000;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+$z-index-navbar: 1030;
+$z-index-sidebar: 1040;

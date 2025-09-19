@@ -44,8 +44,8 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [`
     footer {
-      background: #2c3e50;
-      color: white;
+      background-color: #31393f;
+      color: #fff;
       padding: 3rem 0 1rem;
       margin-top: 4rem;
     }
@@ -57,9 +57,18 @@ import { CommonModule } from '@angular/common';
       margin-bottom: 2rem;
     }
     
-    h3, h4 {
-      color: white;
+    h3 {
+      color: #D04A02;
+      font-size: 1.5rem;
       margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    h4 {
+      color: #fff;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
     }
     
     ul {
@@ -73,19 +82,29 @@ import { CommonModule } from '@angular/common';
     }
     
     a {
-      color: #ecf0f1;
-      transition: color 0.3s;
+      color: rgba(255, 255, 255, 0.8);
+      transition: color 0.2s ease-in-out;
     }
     
     a:hover {
-      color: #007bff;
+      color: #D04A02;
+      text-decoration: none;
+    }
+    
+    p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 0.5rem;
     }
     
     .footer-bottom {
       text-align: center;
       padding-top: 2rem;
-      border-top: 1px solid #34495e;
-      color: #bdc3c7;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .footer-bottom p {
+      margin: 0;
     }
   `]
 })

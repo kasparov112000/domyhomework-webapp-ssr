@@ -25,9 +25,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   `,
   styles: [`
     header {
-      background: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: #fff;
+      background-image: linear-gradient(to right, #fff 0%, #fff 100%);
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.26);
       padding: 1rem 0;
+      position: relative;
+      z-index: 1030;
     }
     
     nav {
@@ -37,9 +40,17 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
     
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: bold;
-      color: #007bff;
+      color: #D04A02;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo:hover {
+      color: #B03902;
     }
     
     .nav-links {
@@ -54,16 +65,37 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     .nav-links a {
       color: #333;
       font-weight: 500;
-      transition: color 0.3s;
+      transition: color 0.2s ease-in-out;
+      position: relative;
+      padding: 0.5rem 0;
     }
     
-    .nav-links a:hover,
+    .nav-links a:hover {
+      color: #D04A02;
+    }
+    
     .nav-links a.active {
-      color: #007bff;
+      color: #D04A02;
+    }
+    
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #D04A02;
     }
     
     .btn {
       margin-left: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
     }
   `]
 })

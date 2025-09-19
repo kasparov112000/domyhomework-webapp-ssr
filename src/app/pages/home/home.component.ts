@@ -63,87 +63,160 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [`
     .hero {
-      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      background: linear-gradient(135deg, #D04A02 0%, #B03902 100%);
       color: white;
       padding: 6rem 0;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('/assets/images/pattern-overlay.png');
+      opacity: 0.1;
     }
     
     h1 {
-      font-size: 3rem;
+      font-size: 3.5rem;
       margin-bottom: 1.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
     }
     
     .lead {
       font-size: 1.25rem;
       margin-bottom: 2rem;
-      opacity: 0.9;
+      opacity: 0.95;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
     }
     
     .cta-buttons {
       display: flex;
       gap: 1rem;
       justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
     
     .features-preview {
-      padding: 4rem 0;
+      padding: 5rem 0;
+      background-color: #fafafa;
     }
     
     .features-preview h2 {
       text-align: center;
       margin-bottom: 3rem;
+      font-size: 2.5rem;
+      color: #333;
     }
     
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
     }
     
     .feature-card {
       background: white;
-      padding: 2rem;
+      padding: 2.5rem 2rem;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
       text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-top: 3px solid transparent;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+      border-top-color: #D04A02;
     }
     
     .feature-card h3 {
-      color: #007bff;
+      color: #D04A02;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-card p {
+      color: #666;
+      line-height: 1.6;
     }
     
     .testimonials {
-      background: #f8f9fa;
-      padding: 4rem 0;
+      background: #31393f;
+      padding: 5rem 0;
+      color: white;
     }
     
     .testimonials h2 {
       text-align: center;
       margin-bottom: 3rem;
+      font-size: 2.5rem;
+      color: white;
     }
     
     .testimonial-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
     }
     
     .testimonial {
-      background: white;
-      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2.5rem 2rem;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: background-color 0.3s ease;
+    }
+    
+    .testimonial:hover {
+      background: rgba(255, 255, 255, 0.08);
     }
     
     .testimonial p {
       font-style: italic;
       margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
     
     .testimonial cite {
-      color: #6c757d;
-      font-size: 0.9rem;
+      color: #D04A02;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero {
+        padding: 4rem 0;
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .cta-buttons .btn {
+        width: 200px;
+      }
     }
   `]
 })
