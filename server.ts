@@ -3,7 +3,7 @@ import 'zone.js/node';
 import express from 'express';
 import { join } from 'path';
 import { APP_BASE_HREF } from '@angular/common';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { renderApplication } from '@angular/platform-server';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent, config } from './src/main.server';
@@ -16,6 +16,11 @@ export function app(): express.Express {
   // Check if index.html exists
   const indexPath = join(distFolder, 'index.html');
   const indexHtml = existsSync(indexPath) ? readFileSync(indexPath, 'utf-8') : '';
+  
+  if (!indexHtml) {
+    console.error('ERROR: index.html not found at:', indexPath);
+    console.error('Dist folder contents:', existsSync(distFolder) ? readdirSync(distFolder) : 'Folder does not exist');
+  }
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
@@ -36,6 +41,15 @@ export function app(): express.Express {
         { provide: APP_BASE_HREF, useValue: req.baseUrl }
       ]
     });
+    
+    if (!indexHtml) {
+      res.status(500).send(`
+        <h1>Server Error</h1>
+        <p>index.html not found. The application may not have been built correctly.</p>
+        <p>Looking for: ${indexPath}</p>
+      `);
+      return;
+    }
     
     renderApplication(bootstrap, {
       document: indexHtml,
