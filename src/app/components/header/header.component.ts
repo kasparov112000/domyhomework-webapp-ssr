@@ -45,7 +45,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.125rem;
       text-decoration: none;
     }
     
