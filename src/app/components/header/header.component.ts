@@ -12,7 +12,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <nav>
           <a class="logo" routerLink="/">
             <span class="logo-icon material-icons">psychology</span>
-            <span class="logo-text">LearnByTesting</span>
+            <span class="logo-text">LearnByTesting.ai</span>
           </a>
           <ul class="nav-links">
             <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>

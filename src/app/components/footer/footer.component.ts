@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3>LearnByTesting</h3>
+            <h3>LearnByTesting.ai</h3>
             <p>Transform your learning through interactive testing and personalized education.</p>
           </div>
           <div class="footer-section">
@@ -37,7 +37,7 @@ import { CommonModule } from '@angular/common';
           </div>
         </div>
         <div class="footer-bottom">
-          <p>&copy; {{ currentYear }} LearnByTesting. All rights reserved.</p>
+          <p>&copy; {{ currentYear }} LearnByTesting.ai. All rights reserved.</p>
         </div>
       </div>
     </footer>

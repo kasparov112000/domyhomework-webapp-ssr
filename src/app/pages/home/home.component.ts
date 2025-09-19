@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
       <div class="container">
         <span class="hero-icon material-icons">psychology</span>
         <h1>Master Any Subject Through Interactive Testing</h1>
-        <p class="lead">LearnByTesting revolutionizes education by combining proven testing techniques with personalized learning paths.</p>
+        <p class="lead">LearnByTesting.ai revolutionizes education by combining proven testing techniques with personalized learning paths.</p>
         <div class="cta-buttons">
           <a href="https://app.learnbytesting.ai" class="btn btn-primary">Get Started Free</a>
           <a href="/features" class="btn btn-secondary">Learn More</a>
