@@ -25,6 +25,19 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', distFolder);
 
+  // Health check endpoint
+  server.get('/health', (req, res) => {
+    res.json({
+      status: 'ok',
+      distFolder: distFolder,
+      distExists: existsSync(distFolder),
+      indexPath: indexPath,
+      indexExists: existsSync(indexPath),
+      distContents: existsSync(distFolder) ? readdirSync(distFolder).slice(0, 10) : [],
+      cwd: process.cwd()
+    });
+  });
+
   // Serve static files
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
