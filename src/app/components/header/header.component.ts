@@ -12,7 +12,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <nav>
           <a class="logo" routerLink="/">
             <span class="logo-icon material-icons">psychology</span>
-            <span class="logo-text">LearnByTesting</span>
+            <span class="logo-text">
+              <span class="learn">Learn</span>
+              <span class="by">By</span>
+              <span class="testing">Testing</span>
+              <span class="dot">.</span>
+              <span class="ai">ai</span>
+            </span>
           </a>
           <ul class="nav-links">
             <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
@@ -69,59 +75,72 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
     
     .logo-text {
-      font-size: 1.75rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #D04A02 0%, #E85A12 50%, #D04A02 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+      font-size: 1.5rem;
       font-family: 'Roboto', sans-serif;
+      display: flex;
+      align-items: baseline;
       position: relative;
-      animation: shimmer 3s ease-in-out infinite;
     }
     
-    @keyframes shimmer {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .learn {
+      font-weight: 300;
+      color: #666;
+      letter-spacing: -0.5px;
     }
     
-    .logo-text::after {
-      content: '.ai';
-      position: absolute;
-      right: -2px;
-      top: -8px;
-      font-size: 0.6em;
-      font-weight: 600;
-      background: linear-gradient(135deg, #E85A12, #FF6B22);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 0.5px;
-      text-transform: lowercase;
-      animation: pulse 2s ease-in-out infinite;
+    .by {
+      font-weight: 700;
+      color: #D04A02;
+      font-size: 0.85em;
+      margin: 0 2px;
+      position: relative;
+      top: -2px;
     }
     
-    @keyframes pulse {
-      0%, 100% { opacity: 0.8; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.05); }
+    .testing {
+      font-weight: 700;
+      color: #333;
+      letter-spacing: -0.5px;
+    }
+    
+    .dot {
+      color: #D04A02;
+      font-weight: 700;
+      margin: 0 1px;
+    }
+    
+    .ai {
+      font-weight: 900;
+      background: #D04A02;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75em;
+      position: relative;
+      top: -2px;
+      margin-left: 2px;
     }
     
     .logo:hover .logo-icon {
-      color: #B03902;
-      transform: rotate(15deg);
-      transition: transform 0.3s ease;
+      transform: scale(1.1);
     }
     
-    .logo:hover .logo-text {
-      animation-duration: 1s;
+    .logo:hover .learn {
+      color: #D04A02;
     }
     
-    .logo:hover .logo-text::after {
-      animation-duration: 1s;
+    .logo:hover .testing {
+      color: #D04A02;
+    }
+    
+    .logo:hover .ai {
+      background: #333;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .logo-text span {
+      transition: all 0.3s ease;
     }
     
     .nav-links {
