@@ -12,34 +12,41 @@ import { AppComponent, config } from './src/main.server';
 export function app(): express.Express {
   const server = express();
   const distFolder = join(process.cwd(), 'dist/webapp-ssr');
+  const browserDistFolder = join(distFolder, 'browser');
   
-  // Check if index.html exists
-  const indexPath = join(distFolder, 'index.html');
+  // Check if index.html exists in the browser folder
+  const indexPath = join(browserDistFolder, 'index.html');
   const indexHtml = existsSync(indexPath) ? readFileSync(indexPath, 'utf-8') : '';
   
   if (!indexHtml) {
     console.error('ERROR: index.html not found at:', indexPath);
     console.error('Dist folder contents:', existsSync(distFolder) ? readdirSync(distFolder) : 'Folder does not exist');
+    if (existsSync(browserDistFolder)) {
+      console.error('Browser folder contents:', readdirSync(browserDistFolder).slice(0, 10));
+    }
   }
 
   server.set('view engine', 'html');
-  server.set('views', distFolder);
+  server.set('views', browserDistFolder);
 
   // Health check endpoint
   server.get('/health', (req, res) => {
     res.json({
       status: 'ok',
       distFolder: distFolder,
+      browserDistFolder: browserDistFolder,
       distExists: existsSync(distFolder),
+      browserDistExists: existsSync(browserDistFolder),
       indexPath: indexPath,
       indexExists: existsSync(indexPath),
       distContents: existsSync(distFolder) ? readdirSync(distFolder).slice(0, 10) : [],
+      browserContents: existsSync(browserDistFolder) ? readdirSync(browserDistFolder).slice(0, 10) : [],
       cwd: process.cwd()
     });
   });
 
-  // Serve static files
-  server.get('*.*', express.static(distFolder, {
+  // Serve static files from the browser folder
+  server.get('*.*', express.static(browserDistFolder, {
     maxAge: '1y'
   }));
 
