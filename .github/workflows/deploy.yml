@@ -1,0 +1,99 @@
+name: Build and Deploy SSR
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Docker image tag'
+        required: false
+        default: 'latest'
+
+env:
+  DOCKER_REGISTRY: docker.io
+  DOCKER_IMAGE: kasparov112000/learnbytesting-webapp-ssr
+  HELM_RELEASE: webapp-ssr
+  DIGITALOCEAN_CLUSTER: 3b23a2dd-3391-4d1a-a478-e2a5564de99c
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Get commit SHA
+      id: sha
+      run: echo "sha_short=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_OUTPUT
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ env.DOCKER_IMAGE }}:latest
+          ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          ${{ env.DOCKER_IMAGE }}:${{ steps.sha.outputs.sha_short }}
+        platforms: linux/amd64
+        cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache
+        cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache,mode=max
+        build-args: |
+          ENV_NAME=production
+    
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    
+    - name: Setup Kubernetes
+      run: |
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.DIGITALOCEAN_CLUSTER }}
+    
+    - name: Check if image is available
+      run: |
+        echo "Waiting for image to be available on DockerHub..."
+        for i in {1..30}; do
+          if docker manifest inspect ${{ env.DOCKER_IMAGE }}:${{ github.sha }} > /dev/null 2>&1; then
+            echo "Image is available!"
+            break
+          fi
+          echo "Attempt $i/30: Image not available yet, waiting..."
+          sleep 10
+        done
+    
+    - name: Deploy to Kubernetes
+      run: |
+        helm upgrade --install \
+          --namespace default \
+          --set image.tag=${{ github.sha }} \
+          --set image.repository=${{ env.DOCKER_IMAGE }} \
+          --wait \
+          --timeout 10m \
+          ${{ env.HELM_RELEASE }} ./helm
+    
+    - name: Check deployment status
+      run: |
+        echo "Checking deployment status..."
+        kubectl rollout status deployment/${{ env.HELM_RELEASE }} --timeout=5m
+        
+        echo "Getting pod information..."
+        kubectl get pods -l app.kubernetes.io/instance=${{ env.HELM_RELEASE }}
+        
+        echo "Deployment successful!"
+    
+    - name: Update ingress if needed
+      run: |
+        echo "Applying ingress configuration..."
+        kubectl apply -f ../webapp/lbt_ingress.yaml || true
