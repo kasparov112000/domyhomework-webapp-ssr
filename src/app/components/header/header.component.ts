@@ -12,7 +12,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <nav>
           <a class="logo" routerLink="/">
             <span class="logo-icon material-icons">psychology</span>
-            <span class="logo-text">LearnByTesting.ai</span>
+            <span class="logo-text">LearnByTesting</span>
           </a>
           <ul class="nav-links">
             <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
@@ -65,19 +65,63 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       -webkit-font-feature-settings: 'liga';
       -webkit-font-smoothing: antialiased;
       margin-right: -2px;
+      transition: all 0.3s ease;
     }
     
     .logo-text {
       font-size: 1.75rem;
-      font-weight: bold;
-      color: #D04A02;
+      font-weight: 800;
+      background: linear-gradient(135deg, #D04A02 0%, #E85A12 50%, #D04A02 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      font-family: 'Roboto', sans-serif;
+      position: relative;
+      animation: shimmer 3s ease-in-out infinite;
     }
     
-    .logo:hover .logo-icon,
-    .logo:hover .logo-text {
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .logo-text::after {
+      content: '.ai';
+      position: absolute;
+      right: -2px;
+      top: -8px;
+      font-size: 0.6em;
+      font-weight: 600;
+      background: linear-gradient(135deg, #E85A12, #FF6B22);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.5px;
+      text-transform: lowercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    
+    .logo:hover .logo-icon {
       color: #B03902;
+      transform: rotate(15deg);
+      transition: transform 0.3s ease;
+    }
+    
+    .logo:hover .logo-text {
+      animation-duration: 1s;
+    }
+    
+    .logo:hover .logo-text::after {
+      animation-duration: 1s;
     }
     
     .nav-links {
