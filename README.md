@@ -1,5 +1,7 @@
 # LearnByTesting SSR Landing Pages
 
+<!-- Deployment fixed: 2025-10-01 -->
+
 This is the Angular Universal SSR application that serves the marketing and landing pages for LearnByTesting at https://learnbytesting.ai
 
 ## Overview
