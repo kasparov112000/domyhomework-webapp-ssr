@@ -1,4 +1,8 @@
 import 'zone.js/node';
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 import express from 'express';
 import { join } from 'path';
@@ -7,6 +11,7 @@ import { existsSync, readFileSync, readdirSync } from 'fs';
 import { renderApplication } from '@angular/platform-server';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent, config } from './src/main.server';
+import { visitorLogger } from './src/app/middleware/visitor-logger';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -29,6 +34,36 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
+  // Add body parser for JSON requests
+  server.use(express.json());
+
+  // Add visitor logging middleware if enabled
+  if (process.env['ENABLE_VISITOR_LOGGING'] !== 'false') {
+    console.log('🔍 Visitor logging enabled');
+    console.log(`📁 Logs directory: ${process.env['VISITOR_LOG_DIR'] || './logs'}`);
+    console.log(`🌐 Send to API: ${process.env['SEND_TO_AUDIT_API'] !== 'false' ? 'Yes' : 'No'}`);
+    if (process.env['SEND_TO_AUDIT_API'] !== 'false') {
+      const isLocal = process.env['NODE_ENV'] === 'development' || 
+                      process.env['ENV_NAME'] === 'LOCAL' || 
+                      !process.env['NODE_ENV'];
+      console.log(`🎯 Orchestrator: ${isLocal ? 'http://localhost:8080' : 'https://orchestrator.learnbytesting.ai'}`);
+    }
+    server.use(visitorLogger.middleware());
+  } else {
+    console.log('❌ Visitor logging disabled');
+  }
+
+  // Test endpoint for visitor logging
+  server.get('/test-visitor-log', (req, res) => {
+    console.log('Test endpoint hit - this should trigger visitor logging');
+    res.json({
+      message: 'Visitor logging test',
+      timestamp: new Date().toISOString(),
+      visitorLoggingEnabled: process.env['ENABLE_VISITOR_LOGGING'] !== 'false',
+      sendToApiEnabled: process.env['SEND_TO_AUDIT_API'] !== 'false'
+    });
+  });
+
   // Health check endpoint
   server.get('/health', (req, res) => {
     res.json({
@@ -43,6 +78,26 @@ export function app(): express.Express {
       browserContents: existsSync(browserDistFolder) ? readdirSync(browserDistFolder).slice(0, 10) : [],
       cwd: process.cwd()
     });
+  });
+
+  // Visitor stats API endpoints
+  server.get('/api/visitor-stats', (req, res) => {
+    const date = req.query['date'] ? new Date(req.query['date'] as string) : undefined;
+    const stats = visitorLogger.getStats(date);
+    res.json(stats || { error: 'No stats available for the specified date' });
+  });
+
+  server.get('/api/recent-visitors', (req, res) => {
+    const minutes = parseInt(req.query['minutes'] as string) || 60;
+    const visitors = visitorLogger.getRecentVisitors(minutes);
+    res.json(visitors);
+  });
+
+  // Trigger cleanup of old logs
+  server.post('/api/cleanup-logs', (req, res) => {
+    const daysToKeep = parseInt(req.body?.daysToKeep) || 30;
+    visitorLogger.cleanupOldLogs(daysToKeep);
+    res.json({ message: `Old logs cleanup triggered (keeping last ${daysToKeep} days)` });
   });
 
   // Serve static files from the browser folder
