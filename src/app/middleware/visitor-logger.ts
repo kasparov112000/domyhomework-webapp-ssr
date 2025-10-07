@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { writeFileSync, appendFileSync, existsSync, mkdirSync, readdirSync, unlinkSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { AuditLogService } from '../services/audit-log.service';
+import * as geoip from 'geoip-lite';
 
 export interface VisitorLog {
   timestamp: string;
@@ -31,6 +32,11 @@ export interface VisitorLog {
     'cf-connecting-ip'?: string;
     'cf-ipcountry'?: string;
     'cf-ray'?: string;
+  };
+  geo?: {
+    lat: number;
+    lon: number;
+    timezone?: string;
   };
 }
 
@@ -134,6 +140,47 @@ export class VisitorLogger {
     return undefined;
   }
   
+  private getGeolocation(ip: string): { 
+    country?: string; 
+    region?: string; 
+    city?: string; 
+    ll?: [number, number];
+    timezone?: string;
+  } {
+    // Don't try to geolocate internal/private IPs
+    const privateIpRanges = [
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
+      /^192\.168\./,
+      /^127\./,
+      /^::1$/,
+      /^fc00::/,
+      /^fe80::/
+    ];
+    
+    const isPrivateIp = privateIpRanges.some(range => range.test(ip));
+    if (isPrivateIp) {
+      return {};
+    }
+    
+    try {
+      const geo = geoip.lookup(ip);
+      if (geo) {
+        return {
+          country: geo.country,
+          region: geo.region,
+          city: geo.city,
+          ll: geo.ll,
+          timezone: geo.timezone
+        };
+      }
+    } catch (error) {
+      console.error('[VisitorLogger] Error looking up IP geolocation:', error);
+    }
+    
+    return {};
+  }
+  
   public middleware() {
     const self = this;
     return (req: Request, res: Response, next: NextFunction) => {
@@ -176,6 +223,12 @@ export class VisitorLogger {
         const userAgent = req.headers['user-agent'] || 'unknown';
         const { browser, os, device } = self.parseUserAgent(userAgent);
         
+        // Get geolocation data
+        const geoData = self.getGeolocation(ip);
+        
+        // Try to get country from headers first (more accurate if using Cloudflare)
+        const countryFromHeader = self.extractCountryFromHeaders(req);
+        
         const visitorLog: VisitorLog = {
           timestamp: new Date().toISOString(),
           ip: ip,
@@ -185,7 +238,9 @@ export class VisitorLogger {
           path: req.path,
           query: req.query,
           referer: req.headers['referer'],
-          country: self.extractCountryFromHeaders(req),
+          country: countryFromHeader || geoData.country,
+          region: geoData.region,
+          city: geoData.city,
           browser,
           os,
           device,
@@ -203,7 +258,13 @@ export class VisitorLogger {
             'cf-connecting-ip': req.headers['cf-connecting-ip'] as string,
             'cf-ipcountry': req.headers['cf-ipcountry'] as string,
             'cf-ray': req.headers['cf-ray'] as string
-          }
+          },
+          // Geolocation details
+          geo: geoData.ll ? {
+            lat: geoData.ll[0],
+            lon: geoData.ll[1],
+            timezone: geoData.timezone
+          } : undefined
         };
         
         // Log to file
