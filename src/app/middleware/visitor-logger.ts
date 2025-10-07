@@ -20,6 +20,18 @@ export interface VisitorLog {
   device?: string;
   responseTime?: number;
   statusCode?: number;
+  language?: string;
+  host?: string;
+  protocol?: string;
+  secure?: boolean;
+  headers?: {
+    'x-real-ip'?: string;
+    'x-forwarded-for'?: string;
+    'x-forwarded-proto'?: string;
+    'cf-connecting-ip'?: string;
+    'cf-ipcountry'?: string;
+    'cf-ray'?: string;
+  };
 }
 
 interface DailyStats {
@@ -151,13 +163,22 @@ export class VisitorLogger {
         res.send = originalSend;
         
         const responseTime = Date.now() - startTime;
-        const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown';
+        
+        // Extract real visitor IP from various headers
+        const realIp = req.headers['x-real-ip'] as string ||
+                      req.headers['x-forwarded-for'] as string ||
+                      req.headers['cf-connecting-ip'] as string || // Cloudflare
+                      req.headers['x-client-ip'] as string ||
+                      req.socket.remoteAddress || 
+                      'unknown';
+        
+        const ip = realIp.split(',')[0].trim(); // Get first IP if multiple
         const userAgent = req.headers['user-agent'] || 'unknown';
         const { browser, os, device } = self.parseUserAgent(userAgent);
         
         const visitorLog: VisitorLog = {
           timestamp: new Date().toISOString(),
-          ip: ip.split(',')[0].trim(), // Get first IP if multiple
+          ip: ip,
           userAgent,
           method: req.method,
           url: req.url,
@@ -169,7 +190,20 @@ export class VisitorLogger {
           os,
           device,
           responseTime,
-          statusCode: res.statusCode
+          statusCode: res.statusCode,
+          // Additional information
+          language: req.headers['accept-language']?.split(',')[0] || undefined,
+          host: req.headers['host'],
+          protocol: req.protocol,
+          secure: req.secure,
+          headers: {
+            'x-real-ip': req.headers['x-real-ip'] as string,
+            'x-forwarded-for': req.headers['x-forwarded-for'] as string,
+            'x-forwarded-proto': req.headers['x-forwarded-proto'] as string,
+            'cf-connecting-ip': req.headers['cf-connecting-ip'] as string,
+            'cf-ipcountry': req.headers['cf-ipcountry'] as string,
+            'cf-ray': req.headers['cf-ray'] as string
+          }
         };
         
         // Log to file
