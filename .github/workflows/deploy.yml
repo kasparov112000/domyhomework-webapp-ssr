@@ -75,16 +75,37 @@ jobs:
     
     - name: Deploy to Kubernetes
       run: |
-        helm upgrade --install \
-          --namespace default \
-          --set image.tag=${{ github.sha }} \
-          --set image.repository=${{ env.DOCKER_IMAGE }} \
-          --set env.NODE_ENV="production" \
-          --set env.ENV_NAME="PROD" \
-          --set env.ORCHESTRATOR_URL="https://orchestrator.learnbytesting.ai" \
-          --wait \
-          --timeout 10m \
-          ${{ env.HELM_RELEASE }} ./helm
+        # Check for stuck Helm operations
+        echo "Checking for stuck Helm operations..."
+        kubectl get secret -l owner=helm,status=pending-upgrade -o name | grep webapp-ssr | xargs -r kubectl delete || true
+        
+        # Deploy with retry
+        for attempt in 1 2 3; do
+          echo "Deployment attempt $attempt of 3..."
+          if helm upgrade --install \
+            --namespace default \
+            --set image.tag=${{ github.sha }} \
+            --set image.repository=${{ env.DOCKER_IMAGE }} \
+            --set env.NODE_ENV="production" \
+            --set env.ENV_NAME="PROD" \
+            --set env.ORCHESTRATOR_URL="https://orchestrator.learnbytesting.ai" \
+            --wait \
+            --timeout 10m \
+            --atomic \
+            ${{ env.HELM_RELEASE }} ./helm; then
+            echo "Deployment successful!"
+            break
+          else
+            echo "Deployment attempt $attempt failed"
+            if [ $attempt -lt 3 ]; then
+              echo "Waiting 30 seconds before retry..."
+              sleep 30
+            else
+              echo "All deployment attempts failed"
+              exit 1
+            fi
+          fi
+        done
     
     - name: Check deployment status
       run: |
