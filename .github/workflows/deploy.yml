@@ -73,11 +73,39 @@ jobs:
           sleep 10
         done
     
+    - name: Pre-deployment diagnostics
+      run: |
+        echo "=== Pre-deployment diagnostics ==="
+        echo "Current cluster context:"
+        kubectl config current-context
+        
+        echo -e "\nCluster nodes:"
+        kubectl get nodes -o wide
+        
+        echo -e "\nCluster resources:"
+        kubectl top nodes || echo "Metrics not available"
+        
+        echo -e "\nExisting deployments:"
+        kubectl get deployments -A | grep -E "(webapp-ssr|NAMESPACE)" || true
+        
+        echo -e "\nExisting pods for webapp-ssr:"
+        kubectl get pods -l app.kubernetes.io/instance=${{ env.HELM_RELEASE }} -o wide || echo "No existing pods"
+        
+        echo -e "\nHelm releases:"
+        helm list -A | grep -E "(webapp-ssr|NAME)" || true
+        
+        echo -e "\nPending operations:"
+        kubectl get secret -l owner=helm -o custom-columns=NAME:.metadata.name,STATUS:.metadata.labels.status | grep webapp-ssr || echo "No pending operations"
+        
+        echo -e "\nCluster events (last 10 minutes):"
+        kubectl get events --field-selector type=Warning -A --sort-by='.lastTimestamp' | tail -20 || true
+
     - name: Deploy to Kubernetes
       run: |
         # Deploy with retry
         for attempt in 1 2 3; do
-          echo "Deployment attempt $attempt of 3..."
+          echo "=== Deployment attempt $attempt of 3 ==="
+          echo "Timestamp: $(date)"
           
           # Refresh kubeconfig before each attempt
           if [ $attempt -gt 1 ]; then
@@ -88,8 +116,17 @@ jobs:
           # Check for stuck Helm operations
           echo "Checking for stuck Helm operations..."
           kubectl get secret -l owner=helm,status=pending-upgrade -o name | grep webapp-ssr | xargs -r kubectl delete || true
+          kubectl get secret -l owner=helm,status=pending-install -o name | grep webapp-ssr | xargs -r kubectl delete || true
+          kubectl get secret -l owner=helm,status=pending-rollback -o name | grep webapp-ssr | xargs -r kubectl delete || true
           
-          # Try deployment with shorter timeout
+          # Clean up failed releases
+          helm uninstall ${{ env.HELM_RELEASE }} --wait || echo "No existing release to uninstall"
+          
+          # Log the Helm command
+          echo -e "\nExecuting Helm command:"
+          echo "helm upgrade --install --namespace default --set image.tag=${{ github.sha }} --set image.repository=${{ env.DOCKER_IMAGE }} --wait --timeout 5m --atomic ${{ env.HELM_RELEASE }} ./helm"
+          
+          # Try deployment with verbose output and capture both stdout and stderr
           if helm upgrade --install \
             --namespace default \
             --set image.tag=${{ github.sha }} \
@@ -98,18 +135,60 @@ jobs:
             --set env.ENV_NAME="PROD" \
             --set env.ORCHESTRATOR_URL="https://orchestrator.learnbytesting.ai" \
             --wait \
-            --timeout 5m \
+            --timeout 10m \
             --atomic \
-            ${{ env.HELM_RELEASE }} ./helm; then
+            --debug \
+            ${{ env.HELM_RELEASE }} ./helm 2>&1 | tee helm-output.log; then
             echo "Deployment successful!"
             break
           else
-            echo "Deployment attempt $attempt failed"
+            HELM_EXIT_CODE=$?
+            echo "Deployment attempt $attempt failed with exit code: $HELM_EXIT_CODE"
+            
+            # Show the last 50 lines of helm output
+            echo -e "\nLast 50 lines of Helm output:"
+            tail -50 helm-output.log || true
+            
+            # Get pod status
+            echo -e "\nPod status after failed deployment:"
+            kubectl get pods -l app.kubernetes.io/instance=${{ env.HELM_RELEASE }} -o wide
+            
+            # Get pod events
+            echo -e "\nPod events:"
+            for pod in $(kubectl get pods -l app.kubernetes.io/instance=${{ env.HELM_RELEASE }} -o name); do
+              echo "Events for $pod:"
+              kubectl describe $pod | grep -A 10 "Events:" || true
+            done
+            
+            # Get pod logs if any exist
+            echo -e "\nPod logs (if available):"
+            for pod in $(kubectl get pods -l app.kubernetes.io/instance=${{ env.HELM_RELEASE }} -o name); do
+              echo "Logs for $pod:"
+              kubectl logs $pod --tail=50 || echo "No logs available"
+            done
+            
+            # Check for resource constraints
+            echo -e "\nResource requests and limits:"
+            kubectl describe deployment ${{ env.HELM_RELEASE }} | grep -A 10 "Containers:" || echo "Deployment not found"
+            
+            # Check cluster events
+            echo -e "\nRecent cluster events:"
+            kubectl get events --sort-by='.lastTimestamp' -A | grep -E "(webapp-ssr|Warning|Error)" | tail -20 || true
+            
             if [ $attempt -lt 3 ]; then
-              echo "Waiting 15 seconds before retry..."
-              sleep 15
+              echo "Waiting 30 seconds before retry..."
+              sleep 30
             else
               echo "All deployment attempts failed"
+              
+              # Final diagnostics
+              echo -e "\n=== Final diagnostics ==="
+              echo "Deployment status:"
+              kubectl get deployment ${{ env.HELM_RELEASE }} -o yaml | grep -E "(status:|conditions:|message:|reason:)" || true
+              
+              echo -e "\nHelm release status:"
+              helm status ${{ env.HELM_RELEASE }} || echo "No release found"
+              
               exit 1
             fi
           fi

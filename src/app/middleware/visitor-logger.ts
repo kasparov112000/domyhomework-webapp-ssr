@@ -2,7 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import { writeFileSync, appendFileSync, existsSync, mkdirSync, readdirSync, unlinkSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { AuditLogService } from '../services/audit-log.service';
-import * as geoip from 'geoip-lite';
+
+// Lazy load geoip-lite to avoid startup issues
+let geoip: any = null;
+try {
+  geoip = require('geoip-lite');
+} catch (error: any) {
+  console.warn('[VisitorLogger] geoip-lite not available, geolocation disabled:', error?.message || 'Unknown error');
+}
 
 export interface VisitorLog {
   timestamp: string;
@@ -147,6 +154,11 @@ export class VisitorLogger {
     ll?: [number, number];
     timezone?: string;
   } {
+    // Check if geoip is available
+    if (!geoip) {
+      return {};
+    }
+    
     // Don't try to geolocate internal/private IPs
     const privateIpRanges = [
       /^10\./,
