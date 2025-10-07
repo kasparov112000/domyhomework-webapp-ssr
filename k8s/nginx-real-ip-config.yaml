@@ -1,0 +1,64 @@
+# Configuration to enable real client IP forwarding in nginx-ingress
+# This file patches the nginx-ingress controller to preserve real client IPs
+---
+# Patch the nginx-ingress-controller service to preserve source IPs
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+  annotations:
+    # DigitalOcean specific annotations
+    service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "false"
+    service.beta.kubernetes.io/do-loadbalancer-hostname: "lb.learnbytesting.ai"
+spec:
+  # CRITICAL: This must be set to Local to preserve client IPs
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  ports:
+  - appProtocol: http
+    name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - appProtocol: https
+    name: https
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/name: ingress-nginx
+---
+# Configure nginx to properly handle real IPs
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configuration
+  namespace: ingress-nginx
+data:
+  # Enable processing of forwarded headers
+  use-forwarded-headers: "true"
+  
+  # Compute the full X-Forwarded-For header
+  compute-full-forwarded-for: "true"
+  
+  # Which header to use for the real IP
+  forwarded-for-header: "X-Forwarded-For"
+  real-ip-header: "X-Forwarded-For"
+  
+  # Recursively search for the real IP
+  real-ip-recursive: "on"
+  
+  # Trust these CIDR ranges (private IPs used by k8s and DigitalOcean)
+  proxy-real-ip-cidr: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,100.64.0.0/10"
+  
+  # Don't use proxy protocol (DigitalOcean doesn't require it)
+  use-proxy-protocol: "false"
+  
+  # Additional settings for better real IP detection
+  enable-real-ip: "true"
+  
+  # Log settings to help debug
+  log-format-upstream: '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for" "$http_x_real_ip" "$http_cf_connecting_ip" "$realip_remote_addr" $request_time'
