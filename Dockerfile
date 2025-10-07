@@ -28,6 +28,9 @@ COPY --from=build /app/package*.json ./
 # Install only production dependencies
 RUN npm ci --production --legacy-peer-deps
 
+# Copy geoip data files
+COPY --from=build /app/node_modules/geoip-lite/data /app/node_modules/geoip-lite/data
+
 # Expose port
 EXPOSE 4000
 
