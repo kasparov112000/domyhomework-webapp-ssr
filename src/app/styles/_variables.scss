@@ -1,10 +1,13 @@
 // Theme Variables for LearnByTesting SSR App
 // Based on the main webapp theme
 
+// Import Sass color module
+@use 'sass:color';
+
 // Primary Colors
 $primary-color: #D04A02;
-$primary-color-dark: darken($primary-color, 10%);
-$primary-color-light: lighten($primary-color, 10%);
+$primary-color-dark: color.adjust($primary-color, $lightness: -10%);
+$primary-color-light: color.adjust($primary-color, $lightness: 10%);
 
 // Background Colors
 $background-color-light: #fafafa;
@@ -36,9 +39,9 @@ $border-color-dark: rgba(255, 255, 255, 0.1);
 
 // Button Colors
 $button-primary-bg: #D04A02;
-$button-primary-hover-bg: darken($button-primary-bg, 10%);
+$button-primary-hover-bg: color.adjust($button-primary-bg, $lightness: -10%);
 $button-secondary-bg: #6c757d;
-$button-secondary-hover-bg: darken($button-secondary-bg, 10%);
+$button-secondary-hover-bg: color.adjust($button-secondary-bg, $lightness: -10%);
 
 // Success/Error/Warning Colors
 $success-color: #d4edda;

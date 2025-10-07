@@ -36,9 +36,12 @@ export interface VisitorLog {
     'x-real-ip'?: string;
     'x-forwarded-for'?: string;
     'x-forwarded-proto'?: string;
+    'x-original-forwarded-for'?: string;
     'cf-connecting-ip'?: string;
     'cf-ipcountry'?: string;
     'cf-ray'?: string;
+    'true-client-ip'?: string;
+    'x-client-ip'?: string;
   };
   geo?: {
     lat: number;
