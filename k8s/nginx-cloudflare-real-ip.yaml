@@ -15,8 +15,8 @@ data:
   # Use CF-Connecting-IP as the real IP header when behind Cloudflare
   real-ip-header: "CF-Connecting-IP"
   
-  # Alternative headers to check
-  forwarded-for-header: "CF-Connecting-IP,X-Forwarded-For,X-Real-IP"
+  # Which header to use for forwarded-for
+  forwarded-for-header: "X-Forwarded-For"
   
   # Trust Cloudflare's IP ranges (updated list as of 2023)
   # These are Cloudflare's IPv4 ranges

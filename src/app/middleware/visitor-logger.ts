@@ -248,11 +248,20 @@ export class VisitorLogger {
         if (realIp && realIp.includes(',')) {
           // X-Forwarded-For can contain: client, proxy1, proxy2
           // We want the original client (first IP)
-          const ips = realIp.split(',').map(ip => ip.trim());
-          realIp = ips[0];
+          const ips = realIp.split(',').map(ip => ip.trim()).filter(ip => ip && ip !== '');
+          realIp = ips[0] || 'unknown';
         }
         
-        const ip = realIp.split(',')[0].trim(); // Get first IP if multiple
+        // Clean up the IP - remove any non-IP characters
+        let ip = realIp.trim();
+        
+        // Validate it looks like an IP (basic check)
+        if (!ip || ip === 'unknown' || !ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+          // If no valid IP found, fall back to x-real-ip or x-forwarded-for directly
+          ip = (req.headers['x-real-ip'] as string) || 
+               (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+               'unknown';
+        }
         
         // Debug logging for IP resolution
         if (ip.startsWith('10.') || ip.startsWith('172.') || ip.startsWith('192.168.')) {

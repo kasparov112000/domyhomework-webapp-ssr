@@ -39,6 +39,10 @@ RUN cd node_modules/geoip-lite && npm run-script updatedb || echo "GeoIP databas
 # Ensure geoip data directory exists
 RUN ls -la node_modules/geoip-lite/data/ || echo "Warning: GeoIP data files not found"
 
+# Create symlink for geoip data where the app expects it
+RUN mkdir -p /app/dist/webapp-ssr && \
+    ln -s /app/node_modules/geoip-lite/data /app/dist/webapp-ssr/data || true
+
 # Expose port
 EXPOSE 4000
 
