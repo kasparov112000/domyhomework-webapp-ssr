@@ -224,14 +224,33 @@ export class VisitorLogger {
         const responseTime = Date.now() - startTime;
         
         // Extract real visitor IP from various headers
-        const realIp = req.headers['x-real-ip'] as string ||
-                      req.headers['x-forwarded-for'] as string ||
+        // Check multiple headers in order of preference
+        const forwardedFor = req.headers['x-forwarded-for'] as string;
+        const realIp = req.headers['x-original-forwarded-for'] as string || // Original client IP
                       req.headers['cf-connecting-ip'] as string || // Cloudflare
+                      req.headers['true-client-ip'] as string || // Cloudflare Enterprise
+                      req.headers['x-real-ip'] as string ||
                       req.headers['x-client-ip'] as string ||
-                      req.socket.remoteAddress || 
+                      forwardedFor ||
+                      req.connection?.remoteAddress ||
+                      req.socket?.remoteAddress || 
                       'unknown';
         
         const ip = realIp.split(',')[0].trim(); // Get first IP if multiple
+        
+        // Debug logging for IP resolution
+        if (ip.startsWith('10.') || ip.startsWith('172.') || ip.startsWith('192.168.')) {
+          console.log('[VisitorLogger] Private IP detected:', ip);
+          console.log('[VisitorLogger] Available headers:', {
+            'x-forwarded-for': req.headers['x-forwarded-for'],
+            'x-original-forwarded-for': req.headers['x-original-forwarded-for'],
+            'x-real-ip': req.headers['x-real-ip'],
+            'cf-connecting-ip': req.headers['cf-connecting-ip'],
+            'true-client-ip': req.headers['true-client-ip'],
+            'x-client-ip': req.headers['x-client-ip']
+          });
+        }
+        
         const userAgent = req.headers['user-agent'] || 'unknown';
         const { browser, os, device } = self.parseUserAgent(userAgent);
         
@@ -267,9 +286,12 @@ export class VisitorLogger {
             'x-real-ip': req.headers['x-real-ip'] as string,
             'x-forwarded-for': req.headers['x-forwarded-for'] as string,
             'x-forwarded-proto': req.headers['x-forwarded-proto'] as string,
+            'x-original-forwarded-for': req.headers['x-original-forwarded-for'] as string,
             'cf-connecting-ip': req.headers['cf-connecting-ip'] as string,
             'cf-ipcountry': req.headers['cf-ipcountry'] as string,
-            'cf-ray': req.headers['cf-ray'] as string
+            'cf-ray': req.headers['cf-ray'] as string,
+            'true-client-ip': req.headers['true-client-ip'] as string,
+            'x-client-ip': req.headers['x-client-ip'] as string
           },
           // Geolocation details
           geo: geoData.ll ? {
