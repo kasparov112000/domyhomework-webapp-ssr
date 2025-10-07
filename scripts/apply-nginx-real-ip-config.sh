@@ -37,7 +37,7 @@ echo ""
 echo -e "${YELLOW}Step 1: Checking current configuration${NC}"
 echo "================================================"
 echo "Current nginx service externalTrafficPolicy:"
-kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.spec.externalTrafficPolicy}' || echo "Not found"
+kubectl get svc -n default nginx-ingress-ingress-nginx-controller -o jsonpath='{.spec.externalTrafficPolicy}' || echo "Not found"
 echo -e "\n"
 
 echo -e "${YELLOW}Step 2: Applying nginx real IP configuration${NC}"
@@ -47,29 +47,29 @@ kubectl apply -f "$PROJECT_ROOT/k8s/nginx-real-ip-config.yaml"
 echo -e "\n${YELLOW}Step 3: Verifying configuration was applied${NC}"
 echo "================================================"
 echo "Service externalTrafficPolicy:"
-kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.spec.externalTrafficPolicy}'
+kubectl get svc -n default nginx-ingress-ingress-nginx-controller -o jsonpath='{.spec.externalTrafficPolicy}'
 echo -e "\n"
 
 echo "ConfigMap settings:"
-kubectl get configmap -n ingress-nginx nginx-configuration -o yaml | grep -E "(use-forwarded|real-ip|proxy-protocol|cidr)" || echo "No settings found"
+kubectl get configmap -n default nginx-configuration -o yaml 2>/dev/null | grep -E "(use-forwarded|real-ip|proxy-protocol|cidr)" || echo "No settings found"
 
 echo -e "\n${YELLOW}Step 4: Restarting nginx controller${NC}"
 echo "================================================"
-kubectl rollout restart deployment/ingress-nginx-controller -n ingress-nginx
+kubectl rollout restart deployment/nginx-ingress-ingress-nginx-controller -n default
 
 echo "Waiting for rollout to complete..."
-kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=300s
+kubectl rollout status deployment/nginx-ingress-ingress-nginx-controller -n default --timeout=300s
 
 echo -e "\n${YELLOW}Step 5: Checking nginx controller logs${NC}"
 echo "================================================"
 sleep 5  # Give it a moment to start
 echo "Recent nginx startup logs:"
-kubectl logs -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx --tail=20 | grep -E "(real_ip|forwarded|configuration)" || echo "No relevant logs found"
+kubectl logs -n default -l app.kubernetes.io/instance=nginx-ingress --tail=20 | grep -E "(real_ip|forwarded|configuration)" || echo "No relevant logs found"
 
 echo -e "\n${YELLOW}Step 6: Testing configuration${NC}"
 echo "================================================"
 # Get the load balancer IP
-LB_IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+LB_IP=$(kubectl get svc -n default nginx-ingress-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 if [ ! -z "$LB_IP" ]; then
     echo "Load Balancer IP: $LB_IP"
     echo -e "\nYou can now test the configuration by:"

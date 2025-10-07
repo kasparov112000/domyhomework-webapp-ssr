@@ -28,9 +28,15 @@ COPY --from=build /app/package*.json ./
 # Install only production dependencies (including geoip-lite)
 RUN npm ci --production --legacy-peer-deps
 
+# Copy geoip data files from build stage if they exist
+COPY --from=build /app/node_modules/geoip-lite/data /app/node_modules/geoip-lite/data || true
+
 # Try to update geoip database (optional - will fail without license key)
 # The application will work without the database update, just without geolocation
 RUN cd node_modules/geoip-lite && npm run-script updatedb || echo "GeoIP database update skipped (requires license key)"
+
+# Ensure geoip data directory exists
+RUN ls -la node_modules/geoip-lite/data/ || echo "Warning: GeoIP data files not found"
 
 # Expose port
 EXPOSE 4000

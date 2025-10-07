@@ -228,16 +228,29 @@ export class VisitorLogger {
         
         // Extract real visitor IP from various headers
         // Check multiple headers in order of preference
+        // IMPORTANT: Check Cloudflare headers first as they're most reliable
+        const cfConnectingIp = req.headers['cf-connecting-ip'] as string;
+        const trueClientIp = req.headers['true-client-ip'] as string;
         const forwardedFor = req.headers['x-forwarded-for'] as string;
-        const realIp = req.headers['x-original-forwarded-for'] as string || // Original client IP
-                      req.headers['cf-connecting-ip'] as string || // Cloudflare
-                      req.headers['true-client-ip'] as string || // Cloudflare Enterprise
-                      req.headers['x-real-ip'] as string ||
-                      req.headers['x-client-ip'] as string ||
-                      forwardedFor ||
-                      req.connection?.remoteAddress ||
-                      req.socket?.remoteAddress || 
-                      'unknown';
+        
+        // If we have Cloudflare headers, use them preferentially
+        let realIp = cfConnectingIp || // Cloudflare header (most common)
+                     trueClientIp || // Cloudflare Enterprise
+                     req.headers['x-original-forwarded-for'] as string || // Original client IP
+                     req.headers['x-real-ip'] as string ||
+                     req.headers['x-client-ip'] as string ||
+                     forwardedFor ||
+                     req.connection?.remoteAddress ||
+                     req.socket?.remoteAddress || 
+                     'unknown';
+                     
+        // If we're getting x-forwarded-for with multiple IPs, take the first one
+        if (realIp && realIp.includes(',')) {
+          // X-Forwarded-For can contain: client, proxy1, proxy2
+          // We want the original client (first IP)
+          const ips = realIp.split(',').map(ip => ip.trim());
+          realIp = ips[0];
+        }
         
         const ip = realIp.split(',')[0].trim(); // Get first IP if multiple
         

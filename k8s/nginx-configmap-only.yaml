@@ -1,0 +1,30 @@
+# Safer configuration - only update ConfigMap, not the service
+# This preserves real IPs without breaking the LoadBalancer
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-ingress-nginx-controller
+  namespace: default
+data:
+  # Enable processing of forwarded headers
+  use-forwarded-headers: "true"
+  
+  # Compute the full X-Forwarded-For header
+  compute-full-forwarded-for: "true"
+  
+  # Which header to use for the real IP
+  forwarded-for-header: "X-Forwarded-For"
+  real-ip-header: "X-Forwarded-For"
+  
+  # Set the real IP from any proxy (since we're behind DO LB)
+  set-real-ip-from: "0.0.0.0/0"
+  
+  # Trust all X-Forwarded-* headers
+  use-forwarded-headers: "true"
+  
+  # Log format to debug IPs
+  log-format-upstream: '$proxy_protocol_addr - $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for" "$http_x_real_ip" "$http_cf_connecting_ip"'
+  
+  # Alternative approach - use X-Original-Forwarded-For if available
+  use-proxy-protocol: "false"
