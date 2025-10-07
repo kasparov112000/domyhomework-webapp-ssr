@@ -207,4 +207,4 @@ jobs:
     - name: Update ingress if needed
       run: |
         echo "Applying ingress configuration..."
-        kubectl apply -f ../webapp/lbt_ingress.yaml || true
+        kubectl apply -f ingress/lbt_ingress.yaml || echo "Ingress update skipped"

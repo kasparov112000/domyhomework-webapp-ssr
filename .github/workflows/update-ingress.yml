@@ -2,11 +2,11 @@ name: Update Ingress Configuration
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - 'ingress/**'
-      - '.github/workflows/update-ingress.yml'
+    inputs:
+      reason:
+        description: 'Reason for manual ingress update'
+        required: false
+        default: 'Manual ingress configuration update'
 
 env:
   DIGITALOCEAN_CLUSTER: 3b23a2dd-3391-4d1a-a478-e2a5564de99c
