@@ -12,12 +12,17 @@ import { renderApplication } from '@angular/platform-server';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent, config } from './src/main.server';
 import { visitorLogger } from './src/app/middleware/visitor-logger';
+import testHeadersRouter from './src/app/routes/test-headers';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
   const distFolder = join(process.cwd(), 'dist/webapp-ssr');
   const browserDistFolder = join(distFolder, 'browser');
+  
+  // Trust proxy - essential for getting real IPs behind nginx/load balancer
+  server.set('trust proxy', true);
+  console.log('✅ Trust proxy enabled for real IP detection');
   
   // Check if index.html exists in the browser folder
   const indexPath = join(browserDistFolder, 'index.html');
@@ -92,6 +97,9 @@ export function app(): express.Express {
     const visitors = visitorLogger.getRecentVisitors(minutes);
     res.json(visitors);
   });
+
+  // Test headers route for debugging
+  server.use(testHeadersRouter);
 
   // Trigger cleanup of old logs
   server.post('/api/cleanup-logs', (req, res) => {
