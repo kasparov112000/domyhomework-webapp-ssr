@@ -127,8 +127,19 @@ export class VisitorLogger {
     return (req: Request, res: Response, next: NextFunction) => {
       const startTime = Date.now();
       
-      // Skip logging for static assets and health checks
-      if (req.url.includes('.') || req.url === '/health') {
+      // Skip logging for static assets, health checks, and monitoring probes
+      const userAgent = req.headers['user-agent'] || '';
+      const isMonitoringAgent = userAgent.includes('kube-probe') || 
+                               userAgent.includes('GoogleHC') || 
+                               userAgent.includes('uptime') ||
+                               userAgent.includes('health') ||
+                               userAgent.includes('monitor') ||
+                               userAgent === '';
+      
+      if (req.url.includes('.') || 
+          req.url === '/health' || 
+          req.url === '/healthcheck' ||
+          isMonitoringAgent) {
         return next();
       }
       
