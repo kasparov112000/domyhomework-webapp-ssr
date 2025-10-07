@@ -32,8 +32,16 @@ export class AuditLogService {
    * Determines the appropriate orchestrator URL based on the environment
    */
   private getOrchestratorUrl(): string {
+    console.log('[AuditLogService] Environment variables:', {
+      NODE_ENV: process.env['NODE_ENV'],
+      ENV_NAME: process.env['ENV_NAME'],
+      ORCHESTRATOR_URL: process.env['ORCHESTRATOR_URL'],
+      PORT: process.env['PORT']
+    });
+    
     // If explicitly set in environment, use that
     if (process.env['ORCHESTRATOR_URL']) {
+      console.log('[AuditLogService] Using ORCHESTRATOR_URL from environment:', process.env['ORCHESTRATOR_URL']);
       return process.env['ORCHESTRATOR_URL'];
     }
 
@@ -43,10 +51,13 @@ export class AuditLogService {
     if (isLocalhost) {
       // Use local orchestrator port (typically 8080)
       const localOrchestratorPort = process.env['LOCAL_ORCHESTRATOR_PORT'] || '8080';
-      return `http://localhost:${localOrchestratorPort}`;
+      const localUrl = `http://localhost:${localOrchestratorPort}`;
+      console.log('[AuditLogService] Local environment detected, using:', localUrl);
+      return localUrl;
     }
     
     // Default to production URL
+    console.log('[AuditLogService] Using production URL: https://orchestrator.learnbytesting.ai');
     return 'https://orchestrator.learnbytesting.ai';
   }
 
@@ -54,6 +65,14 @@ export class AuditLogService {
    * Detects if the application is running in a local environment
    */
   private isLocalEnvironment(): boolean {
+    // First, check if we have explicit production indicators
+    if (process.env['NODE_ENV'] === 'production' || 
+        process.env['ENV_NAME'] === 'PROD' || 
+        process.env['ENV_NAME'] === 'PRODUCTION') {
+      console.log('[AuditLogService] Production environment detected');
+      return false;
+    }
+    
     // Check various indicators of local development
     const indicators = [
       process.env['NODE_ENV'] === 'development',
@@ -62,12 +81,18 @@ export class AuditLogService {
       // Check if the SSR app is running on localhost ports
       process.env['PORT'] === '4000' || process.env['PORT'] === '4200',
       // Check hostname if available
-      typeof process !== 'undefined' && process.env['HOSTNAME']?.includes('localhost'),
-      // Default to true if no production indicators
-      !process.env['NODE_ENV'] || process.env['NODE_ENV'] === ''
+      typeof process !== 'undefined' && process.env['HOSTNAME']?.includes('localhost')
     ];
     
-    return indicators.some(indicator => indicator === true);
+    const isLocal = indicators.some(indicator => indicator === true);
+    
+    // If no indicators found either way, default to production (safer)
+    if (!isLocal && !process.env['NODE_ENV'] && !process.env['ENV_NAME']) {
+      console.log('[AuditLogService] No environment indicators found, defaulting to production');
+      return false;
+    }
+    
+    return isLocal;
   }
 
   public static getInstance(): AuditLogService {
@@ -160,7 +185,12 @@ export class AuditLogService {
    * Send audit log entry to the API
    */
   private async sendToAuditLogs(entry: AuditLogEntry): Promise<void> {
-    const url = `${this.apiUrl}/api/auditLogs`;
+    // When using orchestrator URL directly, don't add /api prefix
+    // The /api prefix is only needed when going through the webapp proxy
+    const isOrchestratorDirect = this.apiUrl.includes('orchestrator.learnbytesting.ai');
+    const url = isOrchestratorDirect 
+      ? `${this.apiUrl}/auditLogs`
+      : `${this.apiUrl}/api/auditLogs`;
     
     try {
       console.log('[AuditLogService] Sending to URL:', url);
@@ -215,8 +245,14 @@ export class AuditLogService {
    */
   public async getVisitorStats(days: number = 7): Promise<any> {
     try {
+      // Same logic for URL as sendToAuditLogs
+      const isOrchestratorDirect = this.apiUrl.includes('orchestrator.learnbytesting.ai');
+      const url = isOrchestratorDirect 
+        ? `${this.apiUrl}/auditLogs`
+        : `${this.apiUrl}/api/auditLogs`;
+        
       const response = await axios.get(
-        `${this.apiUrl}/api/auditLogs`,
+        url,
         {
           params: {
             entityName: 'visitor-logs',

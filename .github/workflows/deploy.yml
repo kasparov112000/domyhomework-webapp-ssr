@@ -79,6 +79,9 @@ jobs:
           --namespace default \
           --set image.tag=${{ github.sha }} \
           --set image.repository=${{ env.DOCKER_IMAGE }} \
+          --set env.NODE_ENV="production" \
+          --set env.ENV_NAME="PROD" \
+          --set env.ORCHESTRATOR_URL="https://orchestrator.learnbytesting.ai" \
           --wait \
           --timeout 10m \
           ${{ env.HELM_RELEASE }} ./helm

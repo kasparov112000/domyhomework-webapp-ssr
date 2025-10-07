@@ -48,3 +48,14 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Environment variables
+env:
+  NODE_ENV: "production"
+  ENV_NAME: "PROD"
+  ENABLE_VISITOR_LOGGING: "true"
+  SEND_TO_AUDIT_API: "true"
+  ORCHESTRATOR_URL: "https://orchestrator.learnbytesting.ai"
+  VISITOR_LOG_DIR: "/var/log/webapp-ssr"
+  VISITOR_LOG_RETENTION_DAYS: "30"
+  PORT: "4000"
