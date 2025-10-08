@@ -48,7 +48,6 @@ EXPOSE 4000
 
 # Set environment variables
 ENV PORT=4000
-ENV SEND_TO_AUDIT_API=false
 
 # Start the server
 CMD ["npm", "run", "serve:ssr"]
