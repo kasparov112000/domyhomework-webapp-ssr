@@ -399,7 +399,7 @@ export class VisitorLogger {
     }
     
     // Referers
-    if (log.referer && !log.referer.includes('learnbytesting.ai')) {
+    if (log.referer && !log.referer.includes('domyhomework.ai') && !log.referer.includes('domyhomework.com')) {
       stats.topReferers[log.referer] = (stats.topReferers[log.referer] || 0) + 1;
     }
     

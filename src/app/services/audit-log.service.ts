@@ -120,7 +120,7 @@ export class AuditLogService {
       dateTime: new Date(),
       data: {
         ...visitor,
-        source: 'webapp-ssr',
+        source: 'webapp-dmh-ssr',
         environment: this.isLocalEnvironment() ? 'local' : 'production',
         srrPort: process.env['PORT'] || '4000'
       },
