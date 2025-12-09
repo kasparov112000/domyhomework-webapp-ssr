@@ -8,39 +8,62 @@ import { CommonModule } from '@angular/common';
   template: `
     <section class="hero">
       <div class="container">
-        <span class="hero-icon material-icons">psychology</span>
-        <h1>Master Any Subject Through Interactive Testing</h1>
-        <p class="lead">LearnByTesting.ai revolutionizes education by combining proven testing techniques with personalized learning paths.</p>
+        <span class="hero-icon material-icons">smart_toy</span>
+        <h1>Your AI-Powered Homework Assistant</h1>
+        <p class="lead">DoMyHomework.ai transforms how you study with instant audio-to-text conversion, text-to-audio synthesis, and AI-powered assignment help.</p>
         <div class="cta-buttons">
-          <a href="https://app.learnbytesting.ai" class="btn btn-primary">Get Started Free</a>
-          <a href="/features" class="btn btn-secondary">Learn More</a>
+          <a href="https://app.domyhomework.ai" class="btn btn-primary">Start Free Trial</a>
+          <a href="/features" class="btn btn-secondary">See How It Works</a>
         </div>
       </div>
     </section>
 
     <section class="features-preview">
       <div class="container">
-        <h2>Why LearnByTesting?</h2>
+        <h2>Powerful AI Tools for Academic Success</h2>
         <div class="feature-grid">
           <div class="feature-card">
-            <span class="feature-icon material-icons">quiz</span>
-            <h3>Interactive Quizzes</h3>
-            <p>Create and take custom quizzes tailored to your learning style and pace.</p>
+            <span class="feature-icon material-icons">mic</span>
+            <h3>Audio to Text</h3>
+            <p>Convert lectures, discussions, and audio notes into searchable, editable text instantly.</p>
           </div>
           <div class="feature-card">
-            <span class="feature-icon material-icons">extension</span>
-            <h3>Chess Learning</h3>
-            <p>Master chess openings, tactics, and strategies with our interactive chess questions.</p>
+            <span class="feature-icon material-icons">volume_up</span>
+            <h3>Text to Audio</h3>
+            <p>Transform textbooks and notes into audio for learning on-the-go or auditory studying.</p>
           </div>
           <div class="feature-card">
-            <span class="feature-icon material-icons">analytics</span>
-            <h3>Progress Tracking</h3>
-            <p>Monitor your learning journey with detailed analytics and performance insights.</p>
+            <span class="feature-icon material-icons">auto_awesome</span>
+            <h3>AI Problem Solver</h3>
+            <p>Get step-by-step solutions and explanations for math, science, and complex problems.</p>
           </div>
           <div class="feature-card">
-            <span class="feature-icon material-icons">list_alt</span>
-            <h3>Multiple Question Types</h3>
-            <p>Choose from multiple choice, true/false, and interactive question formats.</p>
+            <span class="feature-icon material-icons">edit_note</span>
+            <h3>Smart Summaries</h3>
+            <p>Generate concise summaries of lengthy texts and create study guides automatically.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-it-works">
+      <div class="container">
+        <h2>How DoMyHomework.ai Works</h2>
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Upload or Record</h3>
+            <p>Upload your lecture recordings, textbooks, or record audio directly in the app.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>AI Processing</h3>
+            <p>Our advanced AI instantly converts, analyzes, and enhances your content.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Get Results</h3>
+            <p>Receive transcripts, audio files, summaries, or solutions ready for studying.</p>
           </div>
         </div>
       </div>
@@ -48,21 +71,29 @@ import { CommonModule } from '@angular/common';
 
     <section class="testimonials">
       <div class="container">
-        <h2>What Learners Say</h2>
+        <h2>Students Love DoMyHomework.ai</h2>
         <div class="testimonial-grid">
           <div class="testimonial">
-            <p>"LearnByTesting helped me improve my chess rating by 300 points in just 2 months!"</p>
-            <cite>- Sarah M., Chess Enthusiast</cite>
+            <p>"Converting my professor's lectures to text has been a game-changer for my note-taking!"</p>
+            <cite>- Maria L., Engineering Student</cite>
           </div>
           <div class="testimonial">
-            <p>"The interactive testing approach made studying actually enjoyable and effective."</p>
-            <cite>- John D., Medical Student</cite>
+            <p>"The text-to-audio feature lets me study while commuting. My grades have improved significantly."</p>
+            <cite>- Alex K., Pre-Med Student</cite>
           </div>
           <div class="testimonial">
-            <p>"I love how I can create custom quizzes for my students. Game changer!"</p>
-            <cite>- Emily R., Teacher</cite>
+            <p>"The AI solver doesn't just give answers - it teaches me how to solve problems step by step."</p>
+            <cite>- Jordan T., Math Major</cite>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <h2>Ready to Transform Your Study Experience?</h2>
+        <p>Join thousands of students already using AI to study smarter, not harder.</p>
+        <a href="https://app.domyhomework.ai" class="btn btn-primary btn-large">Get Started Free</a>
       </div>
     </section>
   `,
@@ -244,7 +275,81 @@ import { CommonModule } from '@angular/common';
       font-size: 0.95rem;
       font-weight: 500;
     }
-    
+
+    .how-it-works {
+      padding: 5rem 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+    }
+
+    .how-it-works h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+      color: #333;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .step {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background: #D04A02;
+      color: white;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 3px 10px rgba(208, 74, 2, 0.3);
+    }
+
+    .step h3 {
+      color: #333;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .step p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .cta-section {
+      background: #fafafa;
+      padding: 5rem 0;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: #666;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn-large {
+      font-size: 1.2rem;
+      padding: 1rem 2.5rem;
+    }
+
     @media (max-width: 768px) {
       h1 {
         font-size: 2.5rem;

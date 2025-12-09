@@ -11,11 +11,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       <div class="container">
         <nav>
           <a class="logo" routerLink="/">
-            <span class="logo-icon material-icons">psychology</span>
+            <span class="logo-icon material-icons">smart_toy</span>
             <span class="logo-text">
-              <span class="learn">Learn</span>
-              <span class="by">By</span>
-              <span class="testing">Testing</span>
+              <span class="do">Do</span>
+              <span class="my">My</span>
+              <span class="homework">Homework</span>
               <span class="dot">.</span>
               <span class="ai">ai</span>
             </span>
@@ -26,7 +26,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
             <li><a routerLink="/about" routerLinkActive="active">About</a></li>
             <li><a routerLink="/pricing" routerLinkActive="active">Pricing</a></li>
             <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
-            <li><a href="https://app.learnbytesting.ai" class="btn btn-primary">Launch App</a></li>
+            <li><a href="https://app.domyhomework.ai" class="btn btn-primary">Launch App</a></li>
           </ul>
         </nav>
       </div>
@@ -82,33 +82,33 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       position: relative;
     }
     
-    .learn {
-      font-weight: 300;
-      color: #666;
-      letter-spacing: -0.5px;
-    }
-    
-    .by {
+    .do {
       font-weight: 700;
       color: #D04A02;
+      letter-spacing: -0.5px;
+    }
+
+    .my {
+      font-weight: 300;
+      color: #666;
       font-size: 0.85em;
       margin: 0 2px;
       position: relative;
       top: -2px;
     }
-    
-    .testing {
+
+    .homework {
       font-weight: 700;
       color: #333;
       letter-spacing: -0.5px;
     }
-    
+
     .dot {
       color: #D04A02;
       font-weight: 700;
       margin: 0 1px;
     }
-    
+
     .ai {
       font-weight: 900;
       background: #D04A02;
@@ -120,16 +120,16 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       top: -2px;
       margin-left: 2px;
     }
-    
+
     .logo:hover .logo-icon {
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(10deg);
     }
-    
-    .logo:hover .learn {
-      color: #D04A02;
+
+    .logo:hover .do {
+      color: #333;
     }
-    
-    .logo:hover .testing {
+
+    .logo:hover .homework {
       color: #D04A02;
     }
     
