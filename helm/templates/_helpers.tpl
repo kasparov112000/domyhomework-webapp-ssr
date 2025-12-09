@@ -1,14 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "webapp-ssr.name" -}}
+{{- define "webapp-dmh-ssr.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "webapp-ssr.fullname" -}}
+{{- define "webapp-dmh-ssr.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -24,16 +24,16 @@ Create a default fully qualified app name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "webapp-ssr.chart" -}}
+{{- define "webapp-dmh-ssr.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "webapp-ssr.labels" -}}
-helm.sh/chart: {{ include "webapp-ssr.chart" . }}
-{{ include "webapp-ssr.selectorLabels" . }}
+{{- define "webapp-dmh-ssr.labels" -}}
+helm.sh/chart: {{ include "webapp-dmh-ssr.chart" . }}
+{{ include "webapp-dmh-ssr.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -43,17 +43,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "webapp-ssr.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "webapp-ssr.name" . }}
+{{- define "webapp-dmh-ssr.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "webapp-dmh-ssr.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "webapp-ssr.serviceAccountName" -}}
+{{- define "webapp-dmh-ssr.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "webapp-ssr.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "webapp-dmh-ssr.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

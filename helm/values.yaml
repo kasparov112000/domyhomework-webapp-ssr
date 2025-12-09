@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: kasparov112000/learnbytesting-webapp-ssr
+  repository: kasparov112000/domyhomework-webapp-ssr
   pullPolicy: Always
   tag: "latest"
 

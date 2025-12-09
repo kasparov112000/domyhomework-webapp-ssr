@@ -1,4 +1,4 @@
-name: Build and Deploy SSR
+name: Build and Deploy DMH SSR
 
 on:
   push:
@@ -12,8 +12,8 @@ on:
 
 env:
   DOCKER_REGISTRY: docker.io
-  DOCKER_IMAGE: kasparov112000/learnbytesting-webapp-ssr
-  HELM_RELEASE: webapp-ssr
+  DOCKER_IMAGE: kasparov112000/domyhomework-webapp-ssr
+  HELM_RELEASE: webapp-dmh-ssr
   DIGITALOCEAN_CLUSTER: 3b23a2dd-3391-4d1a-a478-e2a5564de99c
 
 jobs:
@@ -207,4 +207,4 @@ jobs:
     - name: Update ingress if needed
       run: |
         echo "Applying ingress configuration..."
-        kubectl apply -f ingress/lbt_ingress.yaml || echo "Ingress update skipped"
+        kubectl apply -f ingress/dmh_ingress.yaml || echo "Ingress update skipped"
