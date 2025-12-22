@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="container">
       <h1>Features</h1>
-      <p>Discover all the powerful features that make LearnByTesting the best learning platform.</p>
+      <p>Discover all the powerful AI tools that make DoMyHomework.ai the best study assistant.</p>
     </div>
   `,
   styles: [`

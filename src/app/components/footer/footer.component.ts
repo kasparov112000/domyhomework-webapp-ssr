@@ -10,8 +10,8 @@ import { CommonModule } from '@angular/common';
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3>LearnByTesting.ai</h3>
-            <p>Transform your learning through interactive testing and personalized education.</p>
+            <h3>DoMyHomework.ai</h3>
+            <p>Transform how you study with AI-powered tools for learning and academic success.</p>
           </div>
           <div class="footer-section">
             <h4>Quick Links</h4>
@@ -32,12 +32,12 @@ import { CommonModule } from '@angular/common';
           </div>
           <div class="footer-section">
             <h4>Connect</h4>
-            <p>Email: info&#64;learnbytesting.ai</p>
+            <p>Email: info&#64;domyhomework.ai</p>
             <p>Follow us on social media</p>
           </div>
         </div>
         <div class="footer-bottom">
-          <p>&copy; {{ currentYear }} LearnByTesting.ai - A product of <a href="https://hypothesize.us" target="_blank" rel="noopener">Hypothesize Solutions</a>. All rights reserved.</p>
+          <p>&copy; {{ currentYear }} DoMyHomework.ai - A product of <a href="https://hypothesize.us" target="_blank" rel="noopener">Hypothesize Solutions</a>. All rights reserved.</p>
         </div>
       </div>
     </footer>
