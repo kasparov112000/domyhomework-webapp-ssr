@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +27,38 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
             <li><a routerLink="/about" routerLinkActive="active">About</a></li>
             <li><a routerLink="/pricing" routerLinkActive="active">Pricing</a></li>
             <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
-            <li><a href="https://app.domyhomework.ai" class="btn btn-primary">Launch App</a></li>
+
+            <!-- Auth buttons -->
+            <ng-container *ngIf="!authService.isAuthenticated(); else loggedInTemplate">
+              <li><a routerLink="/auth/login" class="nav-link-auth">Sign In</a></li>
+              <li><a routerLink="/auth/register" class="btn btn-primary">Get Started</a></li>
+            </ng-container>
+
+            <ng-template #loggedInTemplate>
+              <li *ngIf="authService.isAdmin()">
+                <a routerLink="/admin/visitor-stats" routerLinkActive="active">
+                  <span class="material-icons nav-icon">analytics</span>
+                  Admin
+                </a>
+              </li>
+              <li class="user-menu">
+                <button class="user-btn" (click)="toggleUserMenu()">
+                  <span class="material-icons">account_circle</span>
+                  <span class="user-name">{{ getUserName() }}</span>
+                  <span class="material-icons arrow">expand_more</span>
+                </button>
+                <div class="dropdown-menu" *ngIf="showUserMenu">
+                  <a href="https://app.domyhomework.ai" class="dropdown-item">
+                    <span class="material-icons">launch</span>
+                    Launch App
+                  </a>
+                  <button class="dropdown-item" (click)="logout()">
+                    <span class="material-icons">logout</span>
+                    Sign Out
+                  </button>
+                </div>
+              </li>
+            </ng-template>
           </ul>
         </nav>
       </div>
@@ -181,7 +213,98 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     .btn {
       margin-left: 1rem;
     }
-    
+
+    .nav-link-auth {
+      color: #D04A02 !important;
+      font-weight: 600 !important;
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    .user-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.2s;
+    }
+
+    .user-btn:hover {
+      border-color: #D04A02;
+      background: rgba(208, 74, 2, 0.05);
+    }
+
+    .user-btn .material-icons {
+      font-size: 20px;
+      color: #D04A02;
+    }
+
+    .user-btn .arrow {
+      font-size: 18px;
+      color: #666;
+      transition: transform 0.2s;
+    }
+
+    .user-name {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.5rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
+      overflow: hidden;
+      z-index: 1000;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      background: none;
+      color: #333;
+      font-size: 0.875rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .dropdown-item:hover {
+      background: #f5f5f5;
+    }
+
+    .dropdown-item .material-icons {
+      font-size: 18px;
+      color: #666;
+    }
+
     @media (max-width: 768px) {
       .nav-links {
         display: none;
@@ -189,4 +312,38 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
   `]
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  authService = inject(AuthService);
+  private router = inject(Router);
+
+  showUserMenu = false;
+
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  getUserName(): string {
+    const user = this.authService.currentUser();
+    if (user) {
+      if (user.firstName) {
+        return user.firstName;
+      }
+      if (user.email) {
+        return user.email.split('@')[0];
+      }
+    }
+    return 'User';
+  }
+
+  logout(): void {
+    this.showUserMenu = false;
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.router.navigate(['/']);
+      }
+    });
+  }
+}
