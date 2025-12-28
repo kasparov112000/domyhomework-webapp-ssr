@@ -19,7 +19,11 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  token: string;
+  msg?: string;
+  result?: any;
+  responseCookie?: string;
+  // Also support standard format
+  token?: string;
   user?: any;
   message?: string;
 }
@@ -136,14 +140,19 @@ export class AuthService {
       withCredentials: true
     }).pipe(
       tap(response => {
-        if (response.token) {
-          this.tokenStorage.saveToken(response.token);
-          if (response.user) {
-            this.tokenStorage.saveUser(response.user);
-            this._currentUser.set(response.user);
+        // Handle orchnest response format (responseCookie/result) or standard (token/user)
+        const token = response.responseCookie || response.token;
+        const user = response.result || response.user;
+
+        if (token) {
+          this.tokenStorage.saveToken(token);
+          if (user) {
+            this.tokenStorage.saveUser(user);
+            this._currentUser.set(user);
           }
           this._isAuthenticated.set(true);
           this.authState$.next(true);
+          console.log('[AuthService] Login successful, user authenticated');
         }
         this._isLoading.set(false);
       }),
@@ -166,14 +175,19 @@ export class AuthService {
       withCredentials: true
     }).pipe(
       tap(response => {
-        if (response.token) {
-          this.tokenStorage.saveToken(response.token);
-          if (response.user) {
-            this.tokenStorage.saveUser(response.user);
-            this._currentUser.set(response.user);
+        // Handle orchnest response format (responseCookie/result) or standard (token/user)
+        const token = response.responseCookie || response.token;
+        const user = response.result || response.user;
+
+        if (token) {
+          this.tokenStorage.saveToken(token);
+          if (user) {
+            this.tokenStorage.saveUser(user);
+            this._currentUser.set(user);
           }
           this._isAuthenticated.set(true);
           this.authState$.next(true);
+          console.log('[AuthService] Registration successful, user authenticated');
         }
         this._isLoading.set(false);
       }),

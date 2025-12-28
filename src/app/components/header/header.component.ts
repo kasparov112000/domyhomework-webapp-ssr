@@ -21,22 +21,28 @@ import { AuthService } from '../../services/auth/auth.service';
               <span class="ai">ai</span>
             </span>
           </a>
-          <ul class="nav-links">
-            <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-            <li><a routerLink="/features" routerLinkActive="active">Features</a></li>
-            <li><a routerLink="/about" routerLinkActive="active">About</a></li>
-            <li><a routerLink="/pricing" routerLinkActive="active">Pricing</a></li>
-            <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
+
+          <!-- Mobile menu button -->
+          <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="showMobileMenu">
+            <span class="material-icons">{{ showMobileMenu ? 'close' : 'menu' }}</span>
+          </button>
+
+          <ul class="nav-links" [class.mobile-open]="showMobileMenu">
+            <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">Home</a></li>
+            <li><a routerLink="/features" routerLinkActive="active" (click)="closeMobileMenu()">Features</a></li>
+            <li><a routerLink="/about" routerLinkActive="active" (click)="closeMobileMenu()">About</a></li>
+            <li><a routerLink="/pricing" routerLinkActive="active" (click)="closeMobileMenu()">Pricing</a></li>
+            <li><a routerLink="/contact" routerLinkActive="active" (click)="closeMobileMenu()">Contact</a></li>
 
             <!-- Auth buttons -->
             <ng-container *ngIf="!authService.isAuthenticated(); else loggedInTemplate">
-              <li><a routerLink="/auth/login" class="nav-link-auth">Sign In</a></li>
-              <li><a routerLink="/auth/register" class="btn btn-primary">Get Started</a></li>
+              <li><a routerLink="/auth/login" class="nav-link-auth" (click)="closeMobileMenu()">Sign In</a></li>
+              <li><a routerLink="/auth/register" class="btn btn-primary" (click)="closeMobileMenu()">Get Started</a></li>
             </ng-container>
 
             <ng-template #loggedInTemplate>
               <li *ngIf="authService.isAdmin()">
-                <a routerLink="/admin/visitor-stats" routerLinkActive="active">
+                <a routerLink="/admin/visitor-stats" routerLinkActive="active" (click)="closeMobileMenu()">
                   <span class="material-icons nav-icon">analytics</span>
                   Admin
                 </a>
@@ -48,7 +54,7 @@ import { AuthService } from '../../services/auth/auth.service';
                   <span class="material-icons arrow">expand_more</span>
                 </button>
                 <div class="dropdown-menu" *ngIf="showUserMenu">
-                  <a href="https://app.domyhomework.ai" class="dropdown-item">
+                  <a href="https://app.domyhomework.ai" class="dropdown-item" (click)="closeMobileMenu()">
                     <span class="material-icons">launch</span>
                     Launch App
                   </a>
@@ -305,9 +311,96 @@ import { AuthService } from '../../services/auth/auth.service';
       color: #666;
     }
 
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      color: #333;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .mobile-menu-btn:hover {
+      background: rgba(208, 74, 2, 0.1);
+      color: #D04A02;
+    }
+
+    .mobile-menu-btn.active {
+      color: #D04A02;
+    }
+
+    .mobile-menu-btn .material-icons {
+      font-size: 28px;
+    }
+
     @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .nav-links {
         display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        gap: 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        border-top: 1px solid #eee;
+      }
+
+      .nav-links.mobile-open {
+        display: flex;
+      }
+
+      .nav-links li {
+        width: 100%;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 1rem;
+        border-radius: 8px;
+      }
+
+      .nav-links a:hover {
+        background: rgba(208, 74, 2, 0.05);
+      }
+
+      .nav-links .btn {
+        margin: 0.5rem 0 0 0;
+        text-align: center;
+        display: block;
+      }
+
+      .nav-links .nav-link-auth {
+        text-align: center;
+        background: rgba(208, 74, 2, 0.1);
+        margin-top: 0.5rem;
+      }
+
+      .user-menu {
+        width: 100%;
+      }
+
+      .user-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        border: 1px solid #eee;
+        margin-top: 0.5rem;
       }
     }
   `]
@@ -317,9 +410,23 @@ export class HeaderComponent {
   private router = inject(Router);
 
   showUserMenu = false;
+  showMobileMenu = false;
 
   toggleUserMenu(): void {
     this.showUserMenu = !this.showUserMenu;
+  }
+
+  toggleMobileMenu(): void {
+    this.showMobileMenu = !this.showMobileMenu;
+    // Close user menu when toggling mobile menu
+    if (!this.showMobileMenu) {
+      this.showUserMenu = false;
+    }
+  }
+
+  closeMobileMenu(): void {
+    this.showMobileMenu = false;
+    this.showUserMenu = false;
   }
 
   getUserName(): string {

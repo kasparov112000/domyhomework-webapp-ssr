@@ -10,9 +10,98 @@ import { APP_BASE_HREF } from '@angular/common';
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { renderApplication } from '@angular/platform-server';
 import { bootstrapApplication } from '@angular/platform-browser';
+import axios from 'axios';
 import { AppComponent, config } from './src/main.server';
 import { visitorLogger } from './src/app/middleware/visitor-logger';
 import testHeadersRouter from './src/app/routes/test-headers';
+
+// Lazy load geoip-lite for registration IP tracking
+let geoip: any = null;
+try {
+  geoip = require('geoip-lite');
+} catch (error: any) {
+  console.warn('[Server] geoip-lite not available for registration tracking');
+}
+
+// Helper function to get client IP from request
+function getClientIp(req: express.Request): string {
+  // Priority order for getting real IP
+  const ipHeaders = [
+    'cf-connecting-ip',      // Cloudflare
+    'x-real-ip',             // Nginx
+    'x-forwarded-for',       // Standard proxy header
+    'x-client-ip',
+    'true-client-ip',
+    'x-original-forwarded-for'
+  ];
+
+  for (const header of ipHeaders) {
+    const value = req.headers[header];
+    if (value) {
+      const ip = Array.isArray(value) ? value[0] : value.split(',')[0].trim();
+      if (ip && ip !== '::1' && ip !== '127.0.0.1') {
+        return ip;
+      }
+    }
+  }
+
+  // Fallback to socket remote address
+  const socketIp = req.socket?.remoteAddress || req.ip || '0.0.0.0';
+  return socketIp.replace('::ffff:', '');
+}
+
+// Interface for geolocation data
+interface GeoData {
+  country?: string;
+  region?: string;
+  city?: string;
+  timezone?: string;
+}
+
+// Helper function to get geolocation from headers or geoip
+function getGeolocation(req: express.Request, ip: string): GeoData {
+  const result: GeoData = {};
+
+  // First check headers (Cloudflare, Vercel, etc.)
+  const countryHeaders = ['cf-ipcountry', 'x-vercel-ip-country', 'x-country-code'];
+  for (const header of countryHeaders) {
+    const value = req.headers[header];
+    if (value && typeof value === 'string') {
+      result.country = value;
+      break;
+    }
+  }
+
+  // Fall back to geoip lookup for full geolocation
+  if (geoip && ip && !['::1', '127.0.0.1', '0.0.0.0'].includes(ip)) {
+    try {
+      const geo = geoip.lookup(ip);
+      if (geo) {
+        if (!result.country && geo.country) {
+          result.country = geo.country;
+        }
+        result.region = geo.region;
+        result.city = geo.city;
+        result.timezone = geo.timezone;
+      }
+    } catch (e) {
+      // Ignore geoip errors
+    }
+  }
+
+  return result;
+}
+
+// Helper function to determine registration site from request
+function getRegistrationSite(req: express.Request): string {
+  const host = req.headers.host || '';
+  const referer = req.headers.referer || '';
+
+  if (host.includes('domyhomework') || referer.includes('domyhomework')) {
+    return 'DMH';
+  }
+  return 'LBT';
+}
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -106,6 +195,70 @@ export function app(): express.Express {
     const daysToKeep = parseInt(req.body?.daysToKeep) || 30;
     visitorLogger.cleanupOldLogs(daysToKeep);
     res.json({ message: `Old logs cleanup triggered (keeping last ${daysToKeep} days)` });
+  });
+
+  // API Proxy configuration for authentication endpoints
+  const isLocal = process.env['NODE_ENV'] === 'development' ||
+                  process.env['ENV_NAME'] === 'LOCAL' ||
+                  !process.env['NODE_ENV'];
+
+  // Proxy /apg requests to orchnest service
+  const orchnestTarget = isLocal
+    ? 'http://localhost:3700'
+    : 'https://orchestrator.learnbytesting.ai';
+
+  console.log(`🔗 API Proxy: /apg -> ${orchnestTarget}`);
+
+  // Manual proxy for /apg/* routes
+  server.all('/apg/*', async (req, res) => {
+    const targetPath = req.url.replace(/^\/apg/, '');
+    const targetUrl = `${orchnestTarget}${targetPath}`;
+
+    console.log(`[Proxy] ${req.method} ${req.url} -> ${targetUrl}`);
+
+    // Prepare request body
+    let requestBody = req.body;
+
+    // For registration requests, add IP, geolocation, and site information
+    if (targetPath.includes('/user/register') && req.method === 'POST') {
+      const clientIp = getClientIp(req);
+      const geoData = getGeolocation(req, clientIp);
+      const registrationSite = getRegistrationSite(req);
+
+      console.log(`[Proxy] Registration from IP: ${clientIp}, Country: ${geoData.country || 'Unknown'}, Site: ${registrationSite}`);
+
+      // Add registration metadata to the request body
+      requestBody = {
+        ...req.body,
+        registrationIp: clientIp,
+        registrationCountry: geoData.country,
+        registrationRegion: geoData.region,
+        registrationCity: geoData.city,
+        registrationTimezone: geoData.timezone,
+        registrationUserAgent: req.headers['user-agent'],
+        registrationTimestamp: new Date().toISOString(),
+        registrationSite: registrationSite
+      };
+    }
+
+    try {
+      const response = await axios({
+        method: req.method as any,
+        url: targetUrl,
+        data: requestBody,
+        headers: {
+          'Content-Type': req.headers['content-type'] || 'application/json',
+          'Accept': req.headers['accept'] || 'application/json'
+        },
+        timeout: 30000,
+        validateStatus: () => true // Don't throw on any status
+      });
+
+      res.status(response.status).json(response.data);
+    } catch (error: any) {
+      console.error('[Proxy Error]', error.message);
+      res.status(502).json({ error: 'Proxy error', message: error.message });
+    }
   });
 
   // Serve static files from the browser folder
