@@ -7,6 +7,16 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
   },
+
+  // Order flow (paper submission stepper)
+  {
+    path: 'order',
+    loadComponent: () => import('./pages/order/order.component').then(m => m.OrderComponent)
+  },
+  {
+    path: 'order/:id',
+    loadComponent: () => import('./pages/order/order.component').then(m => m.OrderComponent)
+  },
   {
     path: 'about',
     loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent)

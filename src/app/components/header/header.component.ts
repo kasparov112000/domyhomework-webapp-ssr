@@ -37,7 +37,7 @@ import { AuthService } from '../../services/auth/auth.service';
             <!-- Auth buttons -->
             <ng-container *ngIf="!authService.isAuthenticated(); else loggedInTemplate">
               <li><a routerLink="/auth/login" class="nav-link-auth" (click)="closeMobileMenu()">Sign In</a></li>
-              <li><a routerLink="/auth/register" class="btn btn-primary" (click)="closeMobileMenu()">Get Started</a></li>
+              <li><a routerLink="/order" class="btn btn-primary" (click)="closeMobileMenu()">Get Started</a></li>
             </ng-container>
 
             <ng-template #loggedInTemplate>
@@ -54,9 +54,9 @@ import { AuthService } from '../../services/auth/auth.service';
                   <span class="material-icons arrow">expand_more</span>
                 </button>
                 <div class="dropdown-menu" *ngIf="showUserMenu">
-                  <a href="https://app.domyhomework.ai" class="dropdown-item" (click)="closeMobileMenu()">
-                    <span class="material-icons">launch</span>
-                    Launch App
+                  <a routerLink="/order" class="dropdown-item" (click)="closeMobileMenu()">
+                    <span class="material-icons">edit_note</span>
+                    New Order
                   </a>
                   <button class="dropdown-item" (click)="logout()">
                     <span class="material-icons">logout</span>

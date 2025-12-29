@@ -3,18 +3,12 @@
     "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug",
-    "pathRewrite": {
-      "^/api": ""
-    }
+    "logLevel": "debug"
   },
   "/apg": {
-    "target": "http://localhost:3700",
+    "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug",
-    "pathRewrite": {
-      "^/apg": ""
-    }
+    "logLevel": "debug"
   }
 }

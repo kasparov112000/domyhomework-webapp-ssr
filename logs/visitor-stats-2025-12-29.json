@@ -1,0 +1,26 @@
+{
+  "date": "2025-12-29",
+  "totalVisits": 10,
+  "pageViews": {
+    "/en/us/account-management/sweepstakes": 1,
+    "/api/projects/pricing-config": 3,
+    "/apg/orchnest/user/login": 1,
+    "/order": 2,
+    "/api/users/session/current": 2,
+    "/api/projects/submissions/user/6944adac1bf51e6d788f7029": 1
+  },
+  "browsers": {
+    "Chrome": 10
+  },
+  "operatingSystems": {
+    "Windows": 3,
+    "Linux": 7
+  },
+  "countries": {},
+  "topReferers": {
+    "http://localhost:4202/order": 7
+  },
+  "averageResponseTime": 42.7,
+  "errorCount": 0,
+  "uniqueVisitorCount": 1
+}

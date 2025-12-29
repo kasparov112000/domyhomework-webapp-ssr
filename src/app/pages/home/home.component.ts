@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <section class="hero">
       <div class="container">
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
         <h1>Your AI-Powered Homework Assistant</h1>
         <p class="lead">DoMyHomework.ai transforms how you study with instant audio-to-text conversion, text-to-audio synthesis, and AI-powered assignment help.</p>
         <div class="cta-buttons">
-          <a href="https://app.domyhomework.ai" class="btn btn-primary">Start Free Trial</a>
+          <a routerLink="/order" class="btn btn-primary">Start Free Trial</a>
           <a href="/features" class="btn btn-secondary">See How It Works</a>
         </div>
       </div>
@@ -93,7 +94,7 @@ import { CommonModule } from '@angular/common';
       <div class="container">
         <h2>Ready to Transform Your Study Experience?</h2>
         <p>Join thousands of students already using AI to study smarter, not harder.</p>
-        <a href="https://app.domyhomework.ai" class="btn btn-primary btn-large">Get Started Free</a>
+        <a routerLink="/order" class="btn btn-primary btn-large">Get Started Free</a>
       </div>
     </section>
   `,
