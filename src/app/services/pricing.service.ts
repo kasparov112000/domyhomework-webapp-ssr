@@ -46,10 +46,33 @@ export class PricingService {
   readonly appliedPromoCode = computed(() => this._appliedPromoCode());
   readonly promoDiscount = computed(() => this._promoDiscount());
 
+  // Default subject areas as fallback
+  private readonly defaultSubjectAreas: SubjectArea[] = [
+    { id: 'business', name: 'Business & Management', active: true },
+    { id: 'computer_science', name: 'Computer Science & IT', active: true },
+    { id: 'economics', name: 'Economics', active: true },
+    { id: 'education', name: 'Education', active: true },
+    { id: 'engineering', name: 'Engineering', active: true },
+    { id: 'english', name: 'English & Literature', active: true },
+    { id: 'healthcare', name: 'Healthcare & Nursing', active: true },
+    { id: 'history', name: 'History', active: true },
+    { id: 'law', name: 'Law', active: true },
+    { id: 'marketing', name: 'Marketing', active: true },
+    { id: 'mathematics', name: 'Mathematics', active: true },
+    { id: 'philosophy', name: 'Philosophy', active: true },
+    { id: 'psychology', name: 'Psychology', active: true },
+    { id: 'science', name: 'Science (Biology, Chemistry, Physics)', active: true },
+    { id: 'sociology', name: 'Sociology', active: true },
+    { id: 'other', name: 'Other', active: true }
+  ];
+
   // Derived data from config
   readonly extras = computed(() => this._config()?.extras?.filter(e => e.active) || []);
   readonly freeIncludes = computed(() => this._config()?.freeIncludes?.filter(f => f.active) || []);
-  readonly subjectAreas = computed(() => this._config()?.subjectAreas?.filter(s => s.active) || []);
+  readonly subjectAreas = computed(() => {
+    const configSubjects = this._config()?.subjectAreas?.filter(s => s.active);
+    return configSubjects && configSubjects.length > 0 ? configSubjects : this.defaultSubjectAreas;
+  });
   readonly moneyBackDays = computed(() => this._config()?.moneyBackGuaranteeDays || 60);
   readonly quoteExpirationDays = computed(() => this._config()?.quoteExpirationDays || 3);
 
