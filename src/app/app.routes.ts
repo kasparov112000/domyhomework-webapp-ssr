@@ -48,10 +48,22 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/callback/callback.component').then(m => m.AuthCallbackComponent)
   },
 
+  // Protected user routes
+  {
+    path: 'my-orders',
+    loadComponent: () => import('./pages/my-orders/my-orders.component').then(m => m.MyOrdersComponent),
+    canActivate: [authGuard]
+  },
+
   // Protected admin routes
   {
     path: 'admin/visitor-stats',
     loadComponent: () => import('./pages/admin/visitor-stats.component').then(m => m.VisitorStatsComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'admin/orders',
+    loadComponent: () => import('./pages/orders/orders-list.component').then(m => m.OrdersListComponent),
     canActivate: [adminGuard]
   },
 

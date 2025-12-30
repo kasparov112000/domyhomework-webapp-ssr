@@ -792,12 +792,17 @@ export class ReviewStepComponent implements OnInit, OnDestroy {
 
     this.isSubmitting.set(true);
 
-    // Save review step data first
+    // Get current pricing breakdown
+    const currentBreakdown = this.breakdown();
+
+    // Save review step data with pricing
     this.submissionService.saveReview({
       selectedExtras: this.selectedExtras(),
       promoCode: this.appliedPromoCode() || undefined,
       promoCodeValid: !!this.appliedPromoCode(),
-      termsAccepted: true
+      termsAccepted: true,
+      pricingBreakdown: currentBreakdown || undefined,
+      estimatedPrice: currentBreakdown?.finalPrice || 0
     }).subscribe({
       next: () => {
         this.stepComplete.emit();

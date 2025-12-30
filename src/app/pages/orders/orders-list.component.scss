@@ -1,0 +1,742 @@
+// Variables
+$primary-color: #D04A02;
+$primary-light: #EA5E22;
+$primary-dark: #B03902;
+$text-dark: #333333;
+$text-muted: #6c757d;
+$border-color: #e0e0e0;
+$bg-light: #f8f9fa;
+$white: #ffffff;
+
+// Status colors
+$status-pending: #ffc107;
+$status-confirmed: #17a2b8;
+$status-in-progress: #007bff;
+$status-review: #6f42c1;
+$status-completed: #28a745;
+$status-cancelled: #dc3545;
+$status-refunded: #6c757d;
+
+// Status text colors (darker variants)
+$status-pending-dark: #b38600;
+$status-confirmed-dark: #117a8b;
+$status-in-progress-dark: #0056b3;
+$status-completed-dark: #1e7e34;
+
+// Payment status colors
+$payment-pending: #ffc107;
+$payment-processing: #17a2b8;
+$payment-paid: #28a745;
+$payment-failed: #dc3545;
+$payment-refunded: #6c757d;
+
+// Payment text colors (darker variants)
+$payment-pending-dark: #b38600;
+$payment-processing-dark: #117a8b;
+$payment-paid-dark: #1e7e34;
+
+.orders-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: calc(100vh - 100px);
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+// Header
+.page-header {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid $primary-color;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .title-section {
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: $text-dark;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: $text-muted;
+      font-size: 14px;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+// Controls Section
+.controls-section {
+  background: $white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.search-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.search-input-wrapper {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 40px 12px 44px;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+  }
+
+  .clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $text-muted;
+    padding: 4px;
+
+    &:hover {
+      color: $text-dark;
+    }
+  }
+}
+
+.date-filters {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.date-input-wrapper {
+  .date-input {
+    padding: 12px 16px;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 150px;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+  }
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 10px 16px;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  font-size: 14px;
+  background: $white;
+  min-width: 160px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+.view-toggle {
+  display: flex;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .toggle-btn {
+    padding: 8px 12px;
+    border: none;
+    background: $white;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $bg-light;
+    }
+
+    &.active {
+      background: $primary-color;
+      color: $white;
+    }
+
+    &:not(:last-child) {
+      border-right: 1px solid $border-color;
+    }
+  }
+}
+
+.stats-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $border-color;
+  display: flex;
+  gap: 24px;
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: $text-muted;
+
+    svg {
+      color: $primary-color;
+    }
+
+    strong {
+      color: $text-dark;
+    }
+  }
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: $primary-color;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+  }
+}
+
+.btn-outline {
+  background: $white;
+  border: 1px solid $border-color;
+  color: $text-dark;
+
+  &:hover:not(:disabled) {
+    background: $bg-light;
+    border-color: $primary-color;
+  }
+}
+
+.btn-export {
+  background: $white;
+  border: 1px solid $primary-color;
+  color: $primary-color;
+
+  &:hover {
+    background: $primary-color;
+    color: $white;
+  }
+}
+
+// Loading Overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 1000;
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  span {
+    color: $text-muted;
+    font-size: 14px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Grid Container
+.grid-container {
+  background: $white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .orders-grid {
+    width: 100%;
+    height: 600px;
+
+    @media (max-width: 768px) {
+      height: 400px;
+    }
+  }
+}
+
+// AG Grid Custom Styles
+:host ::ng-deep {
+  .ag-theme-alpine {
+    --ag-header-background-color: #{$bg-light};
+    --ag-header-foreground-color: #{$text-dark};
+    --ag-row-hover-color: rgba($primary-color, 0.05);
+    --ag-selected-row-background-color: rgba($primary-color, 0.1);
+    --ag-border-color: #{$border-color};
+
+    .ag-header-cell-label {
+      font-weight: 600;
+    }
+
+    .ag-row {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .ag-cell {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  // Cell styles
+  .order-id {
+    font-family: monospace;
+    font-weight: 600;
+    color: $primary-color;
+  }
+
+  .date-cell {
+    .date {
+      font-weight: 500;
+      color: $text-dark;
+    }
+    .time {
+      font-size: 12px;
+      color: $text-muted;
+    }
+  }
+
+  .customer-cell {
+    .customer-name {
+      font-weight: 500;
+      color: $text-dark;
+    }
+    .customer-email {
+      font-size: 12px;
+      color: $text-muted;
+    }
+  }
+
+  .title-cell {
+    .title {
+      font-weight: 500;
+      color: $text-dark;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .service-type {
+      font-size: 12px;
+      color: $text-muted;
+    }
+  }
+
+  .pages-badge {
+    background: $bg-light;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .deadline {
+    font-weight: 500;
+
+    &.overdue {
+      color: $status-cancelled;
+    }
+    &.urgent {
+      color: $status-pending;
+    }
+  }
+
+  .price {
+    font-weight: 600;
+    color: $primary-color;
+    font-size: 16px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+
+    .btn-view {
+      padding: 8px;
+      border: none;
+      background: $bg-light;
+      border-radius: 6px;
+      cursor: pointer;
+      color: $text-muted;
+      transition: all 0.2s;
+
+      &:hover {
+        background: $primary-color;
+        color: $white;
+      }
+    }
+  }
+}
+
+// Status Badges
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+
+  &.status-pending {
+    background: rgba($status-pending, 0.15);
+    color: $status-pending-dark;
+  }
+  &.status-confirmed {
+    background: rgba($status-confirmed, 0.15);
+    color: $status-confirmed-dark;
+  }
+  &.status-in_progress {
+    background: rgba($status-in-progress, 0.15);
+    color: $status-in-progress-dark;
+  }
+  &.status-review {
+    background: rgba($status-review, 0.15);
+    color: $status-review;
+  }
+  &.status-completed {
+    background: rgba($status-completed, 0.15);
+    color: $status-completed-dark;
+  }
+  &.status-cancelled {
+    background: rgba($status-cancelled, 0.15);
+    color: $status-cancelled;
+  }
+  &.status-refunded {
+    background: rgba($status-refunded, 0.15);
+    color: $status-refunded;
+  }
+}
+
+// Payment Badges
+.payment-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+
+  &.payment-pending {
+    background: rgba($payment-pending, 0.15);
+    color: $payment-pending-dark;
+  }
+  &.payment-processing {
+    background: rgba($payment-processing, 0.15);
+    color: $payment-processing-dark;
+  }
+  &.payment-paid {
+    background: rgba($payment-paid, 0.15);
+    color: $payment-paid-dark;
+  }
+  &.payment-failed {
+    background: rgba($payment-failed, 0.15);
+    color: $payment-failed;
+  }
+  &.payment-refunded {
+    background: rgba($payment-refunded, 0.15);
+    color: $payment-refunded;
+  }
+}
+
+// Tile View
+.tile-container {
+  padding-bottom: 24px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  svg {
+    color: $border-color;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    color: $text-dark;
+  }
+
+  p {
+    margin: 0;
+    color: $text-muted;
+  }
+}
+
+.tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.order-tile {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid $primary-color;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .tile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: $bg-light;
+    border-bottom: 1px solid $border-color;
+
+    .order-id {
+      font-family: monospace;
+      font-weight: 600;
+      color: $primary-color;
+      font-size: 14px;
+    }
+  }
+
+  .tile-body {
+    padding: 20px;
+
+    .order-title {
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-dark;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .order-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+
+      .label {
+        color: $text-muted;
+      }
+
+      .value {
+        color: $text-dark;
+        font-weight: 500;
+
+        &.overdue {
+          color: $status-cancelled;
+        }
+      }
+    }
+  }
+
+  .tile-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: $bg-light;
+    border-top: 1px solid $border-color;
+
+    .price {
+      font-size: 20px;
+      font-weight: 700;
+      color: $primary-color;
+    }
+  }
+}
+
+// Tile Pagination
+.tile-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .page-info {
+    font-size: 14px;
+    color: $text-muted;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .filter-row {
+    .filter-select {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 16px;
+
+    .title-section h1 {
+      font-size: 22px;
+    }
+  }
+
+  .controls-section {
+    padding: 16px;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+
+    .filter-select {
+      width: 100%;
+    }
+
+    .action-buttons {
+      justify-content: space-between;
+    }
+  }
+
+  .tiles-grid {
+    gap: 16px;
+  }
+
+  .order-tile {
+    .tile-header,
+    .tile-body,
+    .tile-footer {
+      padding: 12px 16px;
+    }
+  }
+}

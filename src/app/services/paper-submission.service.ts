@@ -207,8 +207,12 @@ export class PaperSubmissionService {
   updateStep(id: string, stepNumber: number, data: Partial<PaperSubmission>): Observable<ApiResponse<PaperSubmission>> {
     this.updateStepperState({ isSaving: true });
 
+    const url = `${this.baseUrl}/submissions/${id}/step/${stepNumber}`;
+    console.log('[PaperSubmissionService] PUT', url);
+    console.log('[PaperSubmissionService] Request body:', JSON.stringify(data, null, 2));
+
     return this.http.put<ApiResponse<PaperSubmission>>(
-      `${this.baseUrl}/submissions/${id}/step/${stepNumber}`,
+      url,
       data,
       { headers: this.getHeaders() }
     ).pipe(
@@ -485,5 +489,18 @@ export class PaperSubmissionService {
       }),
       catchError(() => of(false))
     );
+  }
+
+  /**
+   * Reset state for starting a new order
+   */
+  resetState(): void {
+    this._currentSubmission.set(null);
+    this._stepperState.set({
+      currentStep: 0,
+      completedSteps: [],
+      isLoading: false,
+      isSaving: false
+    });
   }
 }

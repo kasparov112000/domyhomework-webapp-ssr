@@ -1,5 +1,5 @@
 /**
- * Paper Submission Models for DoMyHomework.ai
+ * Paper Submission Models for DoMyHomework.com
  * Defines TypeScript interfaces for the multi-step paper submission wizard
  */
 
@@ -46,6 +46,8 @@ export interface ReviewStepData {
   promoCode?: string;
   promoCodeValid?: boolean;
   termsAccepted: boolean;
+  pricingBreakdown?: PricingBreakdown;
+  estimatedPrice?: number;
 }
 
 // ===== SUB-INTERFACES =====

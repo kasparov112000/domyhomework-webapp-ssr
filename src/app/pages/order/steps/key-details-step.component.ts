@@ -801,15 +801,20 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
         }
       };
 
+      console.log('[KeyDetailsStep] Saving step data:', JSON.stringify(stepData, null, 2));
+
       this.submissionService.saveKeyDetails(stepData).subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('[KeyDetailsStep] Save response:', response);
           this.stepComplete.emit();
           this.next.emit();
         },
         error: (err) => {
-          console.error('Error saving key details:', err);
+          console.error('[KeyDetailsStep] Error saving key details:', err);
         }
       });
+    } else {
+      console.log('[KeyDetailsStep] Form invalid:', this.form.errors);
     }
   }
 }

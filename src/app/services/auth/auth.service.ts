@@ -103,7 +103,7 @@ export class AuthService {
       // Local development - use proxy or direct orchestrator
       return '/apg/orchnest/user';
     } else if (hostname.includes('domyhomework')) {
-      return 'https://domyhomework.ai/apg/orchnest/user';
+      return 'https://domyhomework.com/apg/orchnest/user';
     } else {
       return 'https://app.learnbytesting.ai/apg/orchnest/user';
     }
@@ -123,7 +123,7 @@ export class AuthService {
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return '/api';
     } else if (hostname.includes('domyhomework')) {
-      return 'https://domyhomework.ai/api';
+      return 'https://domyhomework.com/api';
     } else {
       return 'https://app.learnbytesting.ai/api';
     }

@@ -18,7 +18,7 @@ import { AuthService } from '../../services/auth/auth.service';
               <span class="my">My</span>
               <span class="homework">Homework</span>
               <span class="dot">.</span>
-              <span class="ai">ai</span>
+              <span class="tld">com</span>
             </span>
           </a>
 
@@ -41,11 +41,22 @@ import { AuthService } from '../../services/auth/auth.service';
             </ng-container>
 
             <ng-template #loggedInTemplate>
-              <li *ngIf="authService.isAdmin()">
-                <a routerLink="/admin/visitor-stats" routerLinkActive="active" (click)="closeMobileMenu()">
-                  <span class="material-icons nav-icon">analytics</span>
+              <li *ngIf="authService.isAdmin()" class="admin-dropdown">
+                <button class="admin-btn" (click)="toggleAdminMenu()">
+                  <span class="material-icons nav-icon">admin_panel_settings</span>
                   Admin
-                </a>
+                  <span class="material-icons arrow">expand_more</span>
+                </button>
+                <div class="dropdown-menu admin-menu" *ngIf="showAdminMenu">
+                  <a routerLink="/admin/visitor-stats" class="dropdown-item" (click)="closeMobileMenu()">
+                    <span class="material-icons">analytics</span>
+                    Visitor Stats
+                  </a>
+                  <a routerLink="/admin/orders" class="dropdown-item" (click)="closeMobileMenu()">
+                    <span class="material-icons">receipt_long</span>
+                    Orders
+                  </a>
+                </div>
               </li>
               <li class="user-menu">
                 <button class="user-btn" (click)="toggleUserMenu()">
@@ -57,6 +68,10 @@ import { AuthService } from '../../services/auth/auth.service';
                   <a routerLink="/order" class="dropdown-item" (click)="closeMobileMenu()">
                     <span class="material-icons">edit_note</span>
                     New Order
+                  </a>
+                  <a routerLink="/my-orders" class="dropdown-item" (click)="closeMobileMenu()">
+                    <span class="material-icons">receipt_long</span>
+                    My Orders
                   </a>
                   <button class="dropdown-item" (click)="logout()">
                     <span class="material-icons">logout</span>
@@ -147,7 +162,7 @@ import { AuthService } from '../../services/auth/auth.service';
       margin: 0 1px;
     }
 
-    .ai {
+    .tld {
       font-weight: 900;
       background: #D04A02;
       color: white;
@@ -171,7 +186,7 @@ import { AuthService } from '../../services/auth/auth.service';
       color: #D04A02;
     }
     
-    .logo:hover .ai {
+    .logo:hover .tld {
       background: #333;
       transform: translateY(-2px);
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -311,6 +326,45 @@ import { AuthService } from '../../services/auth/auth.service';
       color: #666;
     }
 
+    /* Admin dropdown */
+    .admin-dropdown {
+      position: relative;
+    }
+
+    .admin-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .admin-btn:hover {
+      color: #D04A02;
+      background: rgba(208, 74, 2, 0.05);
+    }
+
+    .admin-btn .nav-icon {
+      font-size: 20px;
+      color: #D04A02;
+    }
+
+    .admin-btn .arrow {
+      font-size: 18px;
+      color: #666;
+    }
+
+    .admin-menu {
+      min-width: 180px;
+    }
+
     /* Mobile menu button */
     .mobile-menu-btn {
       display: none;
@@ -411,22 +465,31 @@ export class HeaderComponent {
 
   showUserMenu = false;
   showMobileMenu = false;
+  showAdminMenu = false;
 
   toggleUserMenu(): void {
     this.showUserMenu = !this.showUserMenu;
+    this.showAdminMenu = false;
+  }
+
+  toggleAdminMenu(): void {
+    this.showAdminMenu = !this.showAdminMenu;
+    this.showUserMenu = false;
   }
 
   toggleMobileMenu(): void {
     this.showMobileMenu = !this.showMobileMenu;
-    // Close user menu when toggling mobile menu
+    // Close all menus when toggling mobile menu
     if (!this.showMobileMenu) {
       this.showUserMenu = false;
+      this.showAdminMenu = false;
     }
   }
 
   closeMobileMenu(): void {
     this.showMobileMenu = false;
     this.showUserMenu = false;
+    this.showAdminMenu = false;
   }
 
   getUserName(): string {

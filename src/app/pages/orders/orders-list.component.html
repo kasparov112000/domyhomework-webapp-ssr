@@ -1,0 +1,246 @@
+<div class="orders-container">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1>Orders</h1>
+        <p class="subtitle">View and manage customer orders</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-export" (click)="exportToCsv()" *ngIf="viewType === 'grid'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Controls -->
+  <div class="controls-section">
+    <div class="search-row">
+      <!-- Search Input -->
+      <div class="search-input-wrapper">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search orders..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()">
+        <button class="clear-search" *ngIf="searchTerm" (click)="searchTerm = ''; onSearchChange()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Date Filters -->
+      <div class="date-filters">
+        <div class="date-input-wrapper">
+          <input
+            type="date"
+            class="date-input"
+            [(ngModel)]="dateFrom"
+            (change)="onFilterChange()"
+            placeholder="From Date">
+        </div>
+        <div class="date-input-wrapper">
+          <input
+            type="date"
+            class="date-input"
+            [(ngModel)]="dateTo"
+            (change)="onFilterChange()"
+            placeholder="To Date">
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <!-- Status Filter -->
+      <select class="filter-select" [(ngModel)]="statusFilter" (change)="onFilterChange()">
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <!-- Payment Status Filter -->
+      <select class="filter-select" [(ngModel)]="paymentStatusFilter" (change)="onFilterChange()">
+        <option *ngFor="let option of paymentStatusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-outline" (click)="clearFilters()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Clear Filters
+        </button>
+        <button class="btn btn-primary" (click)="refreshData()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- View Toggle (Desktop only) -->
+      <div class="view-toggle" *ngIf="!isMobile">
+        <button
+          class="toggle-btn"
+          [class.active]="viewType === 'grid'"
+          (click)="toggleView('grid')"
+          title="Grid View">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </button>
+        <button
+          class="toggle-btn"
+          [class.active]="viewType === 'tile'"
+          (click)="toggleView('tile')"
+          title="Tile View">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        Total Records: <strong>{{ totalRecords }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading orders...</span>
+  </div>
+
+  <!-- Grid View -->
+  <div class="grid-container" *ngIf="viewType === 'grid' && isBrowserView">
+    <ag-grid-angular
+      class="ag-theme-alpine orders-grid"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [rowModelType]="rowModelType"
+      [cacheBlockSize]="cacheBlockSize"
+      [paginationPageSize]="paginationPageSize"
+      [rowHeight]="rowHeight"
+      [headerHeight]="headerHeight"
+      [animateRows]="true"
+      [pagination]="true"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+  </div>
+
+  <!-- Tile View -->
+  <div class="tile-container" *ngIf="viewType === 'tile'">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && tileOrders.length === 0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+      <h3>No Orders Found</h3>
+      <p>There are no orders matching your criteria.</p>
+    </div>
+
+    <!-- Order Tiles -->
+    <div class="tiles-grid">
+      <div class="order-tile" *ngFor="let order of tileOrders" (click)="viewOrder(order)">
+        <div class="tile-header">
+          <span class="order-id">#{{ (order._id || '').slice(-8).toUpperCase() }}</span>
+          <span class="status-badge status-{{ order.status }}">{{ formatStatus(order.status) }}</span>
+        </div>
+
+        <div class="tile-body">
+          <h3 class="order-title">{{ order.title || 'Untitled Order' }}</h3>
+
+          <div class="order-details">
+            <div class="detail-row">
+              <span class="label">Customer:</span>
+              <span class="value">{{ order.customerEmail }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Service:</span>
+              <span class="value">{{ formatServiceType(order.serviceType) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Pages:</span>
+              <span class="value">{{ order.numberOfPages }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Deadline:</span>
+              <span class="value" [class.overdue]="isOverdue(order.deadline)">
+                {{ formatDate(order.deadline) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tile-footer">
+          <div class="payment-info">
+            <span class="payment-badge payment-{{ order.paymentStatus }}">
+              {{ formatPaymentStatus(order.paymentStatus) }}
+            </span>
+          </div>
+          <div class="price">{{ formatPrice(order.pricing?.finalPrice || 0) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tile Pagination -->
+    <div class="tile-pagination" *ngIf="tileOrders.length > 0">
+      <button
+        class="btn btn-outline"
+        [disabled]="tilePage === 1"
+        (click)="goToTilePage(tilePage - 1)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Previous
+      </button>
+
+      <span class="page-info">Page {{ tilePage }} of {{ tileTotalPages }}</span>
+
+      <button
+        class="btn btn-outline"
+        [disabled]="tilePage === tileTotalPages"
+        (click)="goToTilePage(tilePage + 1)">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
