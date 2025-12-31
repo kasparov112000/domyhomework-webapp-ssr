@@ -219,8 +219,8 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
     .form-section input:focus,
     .form-section textarea:focus {
       outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      border-color: #D04A02;
+      box-shadow: 0 0 0 3px rgba(208, 74, 2, 0.1);
     }
 
     .form-section input.error,
@@ -262,8 +262,8 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
     }
 
     .file-upload-area.dragover {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: #D04A02;
+      background: #fef5f0;
     }
 
     .upload-content svg {
@@ -281,7 +281,7 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
     .upload-content button {
       background: none;
       border: none;
-      color: #6366f1;
+      color: #D04A02;
       font-weight: 600;
       cursor: pointer;
       padding: 0;
@@ -322,7 +322,7 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
     .file-info svg {
       width: 1.5rem;
       height: 1.5rem;
-      color: #6366f1;
+      color: #D04A02;
     }
 
     .file-name {
@@ -373,8 +373,8 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
 
     .select-group select:focus {
       outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      border-color: #D04A02;
+      box-shadow: 0 0 0 3px rgba(208, 74, 2, 0.1);
     }
 
     /* Number Input */
@@ -474,7 +474,7 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1.5rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       color: #fff;
       border: none;
       border-radius: 0.5rem;
@@ -485,7 +485,7 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      background: linear-gradient(135deg, #B03902, #8F2E01);
       transform: translateY(-1px);
     }
 

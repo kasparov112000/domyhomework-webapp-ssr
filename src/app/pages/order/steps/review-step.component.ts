@@ -298,19 +298,19 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
     }
 
     .extra-item:hover {
-      border-color: #a5b4fc;
+      border-color: #f5a580;
     }
 
     .extra-item.selected {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: #D04A02;
+      background: #fef5f0;
     }
 
     .extra-item input[type="checkbox"] {
       width: 1.25rem;
       height: 1.25rem;
       margin-top: 0.125rem;
-      accent-color: #6366f1;
+      accent-color: #D04A02;
     }
 
     .extra-content {
@@ -330,7 +330,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
 
     .extra-price {
       font-weight: 600;
-      color: #6366f1;
+      color: #D04A02;
     }
 
     .extra-description {
@@ -412,7 +412,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
 
     .promo-input input:focus {
       outline: none;
-      border-color: #6366f1;
+      border-color: #D04A02;
     }
 
     .promo-input input:disabled {
@@ -421,7 +421,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
 
     .btn-apply {
       padding: 0.75rem 1.25rem;
-      background: #6366f1;
+      background: #D04A02;
       color: #fff;
       border: none;
       border-radius: 0.5rem;
@@ -431,7 +431,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
     }
 
     .btn-apply:hover:not(:disabled) {
-      background: #4f46e5;
+      background: #B03902;
     }
 
     .btn-apply:disabled {
@@ -505,7 +505,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
     }
 
     .total-price {
-      color: #6366f1;
+      color: #D04A02;
       font-size: 1.5rem;
     }
 
@@ -531,7 +531,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
       width: 1.25rem;
       height: 1.25rem;
       margin-top: 0.125rem;
-      accent-color: #6366f1;
+      accent-color: #D04A02;
     }
 
     .terms-checkbox span {
@@ -540,7 +540,7 @@ import { ExtraItem, SelectedExtra } from '../../../models/paper-submission.model
     }
 
     .terms-checkbox a {
-      color: #6366f1;
+      color: #D04A02;
       text-decoration: none;
     }
 

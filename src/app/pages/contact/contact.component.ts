@@ -659,7 +659,7 @@ interface FAQ {
     }
 
     .map-placeholder {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #D04A02 0%, #B03902 100%);
       padding: 4rem;
       border-radius: 16px;
       text-align: center;

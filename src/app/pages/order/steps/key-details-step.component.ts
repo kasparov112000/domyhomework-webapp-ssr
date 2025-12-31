@@ -272,12 +272,12 @@ import {
     }
 
     .radio-card:hover .card-content {
-      border-color: #a5b4fc;
+      border-color: #f5a580;
     }
 
     .radio-card.selected .card-content {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: #D04A02;
+      background: #fef5f0;
     }
 
     .card-label {
@@ -314,8 +314,8 @@ import {
 
     .select-group select:focus {
       outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      border-color: #D04A02;
+      box-shadow: 0 0 0 3px rgba(208, 74, 2, 0.1);
     }
 
     /* Number Input */
@@ -411,12 +411,12 @@ import {
     }
 
     .deadline-option:hover .option-content {
-      border-color: #a5b4fc;
+      border-color: #f5a580;
     }
 
     .deadline-option.selected .option-content {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: #D04A02;
+      background: #fef5f0;
     }
 
     .option-label {
@@ -465,7 +465,7 @@ import {
     .radio-item input[type="radio"] {
       width: 1.125rem;
       height: 1.125rem;
-      accent-color: #6366f1;
+      accent-color: #D04A02;
     }
 
     .radio-item span {
@@ -496,7 +496,7 @@ import {
       width: 1.25rem;
       height: 1.25rem;
       margin-top: 0.125rem;
-      accent-color: #6366f1;
+      accent-color: #D04A02;
     }
 
     .checkbox-text {
@@ -529,7 +529,7 @@ import {
     /* Price Preview */
     .price-preview {
       padding: 1.5rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       border-radius: 0.75rem;
       text-align: center;
       color: #fff;
@@ -590,7 +590,7 @@ import {
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1.5rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       color: #fff;
       border: none;
       border-radius: 0.5rem;
@@ -601,7 +601,7 @@ import {
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      background: linear-gradient(135deg, #B03902, #8F2E01);
       transform: translateY(-1px);
     }
 

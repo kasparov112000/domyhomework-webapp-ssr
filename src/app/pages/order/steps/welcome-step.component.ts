@@ -310,8 +310,8 @@ import { AuthService } from '../../../services/auth/auth.service';
 
     .form-group input:focus {
       outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      border-color: #D04A02;
+      box-shadow: 0 0 0 3px rgba(208, 74, 2, 0.1);
     }
 
     .form-group input.error {
@@ -339,7 +339,7 @@ import { AuthService } from '../../../services/auth/auth.service';
       justify-content: center;
       gap: 0.5rem;
       padding: 0.875rem 1.5rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       color: #fff;
       border: none;
       border-radius: 0.5rem;
@@ -350,7 +350,7 @@ import { AuthService } from '../../../services/auth/auth.service';
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      background: linear-gradient(135deg, #B03902, #8F2E01);
       transform: translateY(-1px);
     }
 

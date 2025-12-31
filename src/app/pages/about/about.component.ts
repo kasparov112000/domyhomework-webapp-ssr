@@ -251,7 +251,7 @@ interface TeamMember {
   styles: [`
     /* Hero Section */
     .hero-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #D04A02 0%, #B03902 100%);
       color: white;
       padding: 5rem 2rem 8rem;
       position: relative;

@@ -302,7 +302,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
   styles: [`
     .order-page {
       min-height: 100vh;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+      background: linear-gradient(135deg, rgba(208, 74, 2, 0.03) 0%, rgba(176, 57, 2, 0.03) 100%);
     }
 
     /* Stepper Header */
@@ -351,7 +351,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
     }
 
     .step-item.active {
-      background: #6366f1;
+      background: #D04A02;
       color: #fff;
     }
 
@@ -425,7 +425,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
       width: 1rem;
       height: 1rem;
       border: 2px solid #e5e7eb;
-      border-top-color: #6366f1;
+      border-top-color: #D04A02;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
@@ -496,7 +496,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
       width: 3rem;
       height: 3rem;
       border: 3px solid #e5e7eb;
-      border-top-color: #6366f1;
+      border-top-color: #D04A02;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin-bottom: 1rem;
@@ -559,7 +559,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
 
     .total-price {
       font-size: 1.25rem;
-      color: #6366f1;
+      color: #D04A02;
     }
 
     .price-divider {
@@ -625,7 +625,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
     .guarantee-badge svg {
       width: 1.25rem;
       height: 1.25rem;
-      color: #6366f1;
+      color: #D04A02;
       flex-shrink: 0;
     }
 
@@ -673,7 +673,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
     .card-icon {
       width: 5rem;
       height: 5rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       border-radius: 1rem;
       display: flex;
       align-items: center;
@@ -702,7 +702,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
     .processing-dots span {
       width: 0.75rem;
       height: 0.75rem;
-      background: #6366f1;
+      background: #D04A02;
       border-radius: 50%;
       animation: bounce 1.4s ease-in-out infinite;
     }
@@ -854,7 +854,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
     .step-num {
       width: 2rem;
       height: 2rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       color: #fff;
       border-radius: 50%;
       display: flex;
@@ -894,7 +894,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
       display: inline-flex;
       align-items: center;
       padding: 0.75rem 1.5rem;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, #D04A02, #B03902);
       color: #fff;
       border: none;
       border-radius: 0.5rem;
@@ -905,7 +905,7 @@ import { ReviewStepComponent } from './steps/review-step.component';
     }
 
     .complete-actions .btn-primary:hover {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      background: linear-gradient(135deg, #B03902, #8F2E01);
       transform: translateY(-1px);
     }
 
