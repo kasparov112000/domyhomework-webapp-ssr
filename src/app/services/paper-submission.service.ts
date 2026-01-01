@@ -216,26 +216,34 @@ export class PaperSubmissionService {
       data,
       { headers: this.getHeaders() }
     ).pipe(
-      tap(response => {
-        if (response.success && response.result) {
-          this._currentSubmission.set(response.result);
-
-          // Update stepper state with new completed steps
-          const completedSteps = [...this._stepperState().completedSteps];
-          if (!completedSteps.includes(stepNumber)) {
-            completedSteps.push(stepNumber);
-            completedSteps.sort((a, b) => a - b);
-          }
-
-          this.updateStepperState({
-            currentStep: Math.max(stepNumber + 1, this._stepperState().currentStep),
-            completedSteps,
-            lastSavedAt: new Date(),
-            isSaving: false
-          });
-
-          console.log('[PaperSubmissionService] Step updated:', stepNumber);
+      switchMap(response => {
+        // Check if the API response indicates failure
+        if (!response.success || !response.result) {
+          const errorMessage = response.error || 'Failed to save step data';
+          this.updateStepperState({ isSaving: false, error: errorMessage });
+          console.error('[PaperSubmissionService] Step save failed:', errorMessage);
+          return throwError(() => new Error(errorMessage));
         }
+
+        // Success - update state
+        this._currentSubmission.set(response.result);
+
+        // Update stepper state with new completed steps
+        const completedSteps = [...this._stepperState().completedSteps];
+        if (!completedSteps.includes(stepNumber)) {
+          completedSteps.push(stepNumber);
+          completedSteps.sort((a, b) => a - b);
+        }
+
+        this.updateStepperState({
+          currentStep: Math.max(stepNumber + 1, this._stepperState().currentStep),
+          completedSteps,
+          lastSavedAt: new Date(),
+          isSaving: false
+        });
+
+        console.log('[PaperSubmissionService] Step updated:', stepNumber);
+        return of(response);
       }),
       catchError(error => {
         this.updateStepperState({ isSaving: false, error: error.message });

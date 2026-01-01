@@ -191,14 +191,24 @@ import {
         <!-- Price Display -->
         <div class="price-preview">
           <div class="price-label">Estimated Price</div>
-          <div class="price-value">{{ formatPrice(estimatedPrice()) }}</div>
-          <div class="price-per-page">{{ formatPrice(pricePerPage()) }}/page</div>
+          <div class="price-value">{{ formatPrice(currentBreakdown()?.finalPrice || estimatedPrice()) }}</div>
+          <div class="price-per-page">{{ formatPrice(currentBreakdown()?.pricePerPage || pricePerPage()) }}/page</div>
         </div>
       </form>
 
+      <!-- Error Message -->
+      @if (saveError()) {
+        <div class="error-banner">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          {{ saveError() }}
+        </div>
+      }
+
       <!-- Navigation -->
       <div class="step-navigation">
-        <button type="button" class="btn-secondary" (click)="onPrevious()">
+        <button type="button" class="btn-secondary" (click)="onPrevious()" [disabled]="isSaving()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
           </svg>
@@ -208,12 +218,16 @@ import {
           type="button"
           class="btn-primary"
           (click)="onNext()"
-          [disabled]="form.invalid"
+          [disabled]="form.invalid || isSaving()"
         >
-          Continue
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-          </svg>
+          @if (isSaving()) {
+            <span class="spinner"></span> Saving...
+          } @else {
+            Continue
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+            </svg>
+          }
         </button>
       </div>
     </div>
@@ -614,6 +628,40 @@ import {
       width: 1.25rem;
       height: 1.25rem;
     }
+
+    /* Error Banner */
+    .error-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 0.5rem;
+      color: #dc2626;
+      font-size: 0.9375rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-banner svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   `]
 })
 export class KeyDetailsStepComponent implements OnInit, OnDestroy {
@@ -636,9 +684,12 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
   // State
   expertEnabled = signal(false);
   expertSpecialty = signal('');
+  saveError = signal<string | null>(null);
+  isSaving = signal(false);
 
   // From pricing service
   readonly subjectAreas = this.pricingService.subjectAreas;
+  readonly currentBreakdown = this.pricingService.currentBreakdown;
 
   // Form
   form: FormGroup = this.fb.group({
@@ -688,7 +739,18 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
       this.populateForm(submission);
     }
 
-    // Subscribe to form changes for auto-save
+    // Initial price calculation
+    this.updatePriceCalculation();
+
+    // Subscribe to form changes for immediate price updates
+    this.form.valueChanges.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      // Update price immediately for responsive UI
+      this.updatePriceCalculation();
+    });
+
+    // Debounced auto-save (separate from price updates)
     this.form.valueChanges.pipe(
       debounceTime(1000),
       takeUntil(this.destroy$)
@@ -700,9 +762,6 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
           specialty: this.expertSpecialty()
         }
       });
-
-      // Update local price calculation
-      this.updatePriceCalculation();
     });
   }
 
@@ -722,6 +781,9 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
         projectPurpose: submission.projectPurpose || 'academic',
         paperType: submission.paperType || 'essay'
       }, { emitEvent: false });
+
+      // Update price after populating form
+      this.updatePriceCalculation();
     }
 
     if (submission.expertPreference) {
@@ -791,6 +853,9 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
 
   onNext(): void {
     if (this.form.valid) {
+      this.saveError.set(null);
+      this.isSaving.set(true);
+
       // Save step data
       const stepData = {
         ...this.form.value,
@@ -805,11 +870,14 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
 
       this.submissionService.saveKeyDetails(stepData).subscribe({
         next: (response) => {
+          this.isSaving.set(false);
           console.log('[KeyDetailsStep] Save response:', response);
           this.stepComplete.emit();
           this.next.emit();
         },
         error: (err) => {
+          this.isSaving.set(false);
+          this.saveError.set(err.message || 'Failed to save. Please try again.');
           console.error('[KeyDetailsStep] Error saving key details:', err);
         }
       });
