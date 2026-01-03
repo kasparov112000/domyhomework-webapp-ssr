@@ -122,10 +122,9 @@ export class AuthService {
 
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return '/api';
-    } else if (hostname.includes('domyhomework')) {
-      return 'https://domyhomework.com/api';
     } else {
-      return 'https://app.learnbytesting.ai/api';
+      // All production sites use the orchestrator API directly
+      return 'https://orchestrator.learnbytesting.ai/api';
     }
   }
 
