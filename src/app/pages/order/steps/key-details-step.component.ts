@@ -5,16 +5,14 @@ import { Subject, takeUntil, debounceTime } from 'rxjs';
 
 import { PaperSubmissionService } from '../../../services/paper-submission.service';
 import { PricingService } from '../../../services/pricing.service';
+import { ServiceType, AcademicLevel, DeadlineUrgency } from '../../../models/paper-submission.model';
 import {
-  SERVICE_TYPE_OPTIONS,
-  ACADEMIC_LEVEL_OPTIONS,
-  DEADLINE_OPTIONS,
-  PROJECT_PURPOSE_OPTIONS,
-  PAPER_TYPE_OPTIONS,
-  ServiceType,
-  AcademicLevel,
-  DeadlineUrgency
-} from '../../../models/paper-submission.model';
+  ServiceTypeOption,
+  AcademicLevelOption,
+  DeadlineOption,
+  PaperTypeOption,
+  ProjectPurposeOption
+} from '../../../models/order-form-options.model';
 
 @Component({
   selector: 'app-key-details-step',
@@ -27,7 +25,7 @@ import {
         <div class="form-section">
           <h3>What do you need? <span class="required">*</span></h3>
           <div class="radio-cards" [class.error-group]="form.get('serviceType')?.invalid && form.get('serviceType')?.touched">
-            @for (option of serviceOptions; track option.value) {
+            @for (option of serviceOptions(); track option.value) {
               <label
                 class="radio-card"
                 [class.selected]="form.get('serviceType')?.value === option.value"
@@ -60,9 +58,9 @@ import {
               [class.error]="form.get('academicLevel')?.invalid && form.get('academicLevel')?.touched"
             >
               <option value="" disabled>Select academic level</option>
-              @for (option of academicOptions; track option.value) {
+              @for (option of academicOptions(); track option.value) {
                 <option [value]="option.value">
-                  {{ option.label }} ({{ formatPrice(getBasePriceForLevel(option.value)) }}/page)
+                  {{ option.label }} ({{ formatPrice(option.basePrice) }}/page)
                 </option>
               }
             </select>
@@ -81,8 +79,13 @@ import {
               [class.error]="form.get('subjectArea')?.invalid && form.get('subjectArea')?.touched"
             >
               <option value="" disabled>Select subject area</option>
-              @for (subject of subjectAreas(); track subject.id) {
-                <option [value]="subject.id">{{ subject.name }}</option>
+              @for (subject of subjectAreaOptions(); track subject.id) {
+                <option [value]="subject.id">
+                  {{ subject.name }}
+                  @if (subject.priceMultiplier && subject.priceMultiplier !== 1.0) {
+                    ({{ subject.priceMultiplier > 1 ? '+' : '' }}{{ ((subject.priceMultiplier - 1) * 100) | number:'1.0-0' }}%)
+                  }
+                </option>
               }
             </select>
             @if (form.get('subjectArea')?.invalid && form.get('subjectArea')?.touched) {
@@ -119,7 +122,7 @@ import {
         <div class="form-section">
           <h3>Deadline <span class="required">*</span></h3>
           <div class="deadline-options" [class.error-group]="form.get('deadlineUrgency')?.invalid && form.get('deadlineUrgency')?.touched">
-            @for (option of deadlineOptions; track option.value) {
+            @for (option of deadlineOptions(); track option.value) {
               <label
                 class="deadline-option"
                 [class.selected]="form.get('deadlineUrgency')?.value === option.value"
@@ -131,8 +134,8 @@ import {
                 >
                 <span class="option-content">
                   <span class="option-label">{{ option.label }}</span>
-                  @if (getDeadlineSavings(option.value); as savings) {
-                    <span class="option-badge" [class.discount]="savings.includes('Save')">{{ savings }}</span>
+                  @if (getDeadlineMultiplierText(option); as text) {
+                    <span class="option-badge" [class.discount]="text.includes('Save')">{{ text }}</span>
                   }
                 </span>
               </label>
@@ -157,7 +160,7 @@ import {
               [class.error]="form.get('paperType')?.invalid && form.get('paperType')?.touched"
             >
               <option value="" disabled>Select paper type</option>
-              @for (option of paperTypeOptions; track option.value) {
+              @for (option of paperTypeOptions(); track option.value) {
                 <option [value]="option.value">{{ option.label }}</option>
               }
             </select>
@@ -171,7 +174,7 @@ import {
         <div class="form-section">
           <h3>Purpose <span class="required">*</span></h3>
           <div class="radio-inline" [class.error-group]="form.get('projectPurpose')?.invalid && form.get('projectPurpose')?.touched">
-            @for (option of purposeOptions; track option.value) {
+            @for (option of purposeOptions(); track option.value) {
               <label class="radio-item">
                 <input
                   type="radio"
@@ -735,12 +738,18 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
   private pricingService = inject(PricingService);
   private destroy$ = new Subject<void>();
 
-  // Options
-  serviceOptions = SERVICE_TYPE_OPTIONS;
-  academicOptions = ACADEMIC_LEVEL_OPTIONS;
-  deadlineOptions = DEADLINE_OPTIONS;
-  purposeOptions = PROJECT_PURPOSE_OPTIONS;
-  paperTypeOptions = PAPER_TYPE_OPTIONS;
+  // Dynamic options from pricing service
+  readonly serviceOptions = this.pricingService.serviceTypeOptions;
+  readonly academicOptions = this.pricingService.academicLevelOptions;
+  readonly deadlineOptions = this.pricingService.deadlineOptions;
+  readonly purposeOptions = this.pricingService.projectPurposeOptions;
+
+  // Filtered paper types based on academic level and subject area
+  readonly paperTypeOptions = computed(() => {
+    const academicLevel = this.form?.get('academicLevel')?.value;
+    const subjectArea = this.form?.get('subjectArea')?.value;
+    return this.pricingService.getFilteredPaperTypes(academicLevel, subjectArea);
+  });
 
   // State
   expertEnabled = signal(false);
@@ -750,6 +759,7 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
 
   // From pricing service
   readonly subjectAreas = this.pricingService.subjectAreas;
+  readonly subjectAreaOptions = this.pricingService.subjectAreaOptions;
   readonly currentBreakdown = this.pricingService.currentBreakdown;
 
   // Form
@@ -771,7 +781,8 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
 
   calculatedDeadline = computed(() => {
     const urgency = this.form.get('deadlineUrgency')?.value;
-    const option = this.deadlineOptions.find(o => o.value === urgency);
+    const options = this.deadlineOptions();
+    const option = options.find(o => o.value === urgency);
     if (!option) return null;
     return new Date(Date.now() + option.hours * 60 * 60 * 1000);
   });
@@ -892,16 +903,29 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
   }
 
   getServiceMultiplierText(type: ServiceType): string | null {
-    const multiplier = this.pricingService.getServiceMultiplier(type);
+    const multiplier = this.pricingService.getServiceTypeMultiplierFromOptions(type);
     if (multiplier < 1) {
       const savings = Math.round((1 - multiplier) * 100);
       return `Save ${savings}%`;
     }
+    if (multiplier > 1) {
+      const premium = Math.round((multiplier - 1) * 100);
+      return `+${premium}%`;
+    }
     return null;
   }
 
-  getDeadlineSavings(urgency: DeadlineUrgency): string | null {
-    return this.pricingService.getDeadlineSavings(urgency);
+  getDeadlineMultiplierText(option: DeadlineOption): string | null {
+    const multiplier = option.priceMultiplier;
+    if (multiplier < 1) {
+      const savings = Math.round((1 - multiplier) * 100);
+      return `Save ${savings}%`;
+    }
+    if (multiplier > 1) {
+      const premium = Math.round((multiplier - 1) * 100);
+      return `+${premium}%`;
+    }
+    return null;
   }
 
   formatPrice(price: number): string {

@@ -1,11 +1,12 @@
-import { Component, Output, EventEmitter, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, Output, EventEmitter, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
 
 import { PaperSubmissionService } from '../../../services/paper-submission.service';
 import { PricingService } from '../../../services/pricing.service';
-import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-submission.model';
+import { UploadedDocument } from '../../../models/paper-submission.model';
+import { CitationStyleOption } from '../../../models/order-form-options.model';
 
 @Component({
   selector: 'app-instructions-step',
@@ -110,11 +111,14 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
           <label for="citationStyle">Citation Style</label>
           <div class="select-group">
             <select id="citationStyle" formControlName="citationStyle">
-              @for (option of citationOptions; track option.value) {
+              @for (option of citationOptions(); track option.value) {
                 <option [value]="option.value">{{ option.label }}</option>
               }
             </select>
           </div>
+          @if (getSubjectArea()) {
+            <p class="helper-text">Showing citation styles recommended for {{ getSubjectAreaName() }}</p>
+          }
         </div>
 
         <!-- Number of Sources -->
@@ -564,8 +568,13 @@ export class InstructionsStepComponent implements OnInit, OnDestroy {
   private pricingService = inject(PricingService);
   private destroy$ = new Subject<void>();
 
-  // Options
-  citationOptions = CITATION_STYLE_OPTIONS;
+  // Dynamic citation options filtered by subject area from the current submission
+  readonly citationOptions = computed((): CitationStyleOption[] => {
+    const submission = this.submissionService.currentSubmission();
+    const subjectArea = submission?.subjectArea;
+    // Get filtered citation styles based on the selected subject area
+    return this.pricingService.getFilteredCitationStyles(undefined, subjectArea);
+  });
 
   // State
   isDragOver = signal(false);
@@ -721,6 +730,17 @@ export class InstructionsStepComponent implements OnInit, OnDestroy {
 
   formatPrice(price: number): string {
     return this.pricingService.formatPrice(price);
+  }
+
+  getSubjectArea(): string | undefined {
+    return this.submissionService.currentSubmission()?.subjectArea;
+  }
+
+  getSubjectAreaName(): string {
+    const subjectAreaId = this.getSubjectArea();
+    if (!subjectAreaId) return '';
+    const subjectArea = this.pricingService.subjectAreaOptions().find(s => s.id === subjectAreaId);
+    return subjectArea?.name || subjectAreaId;
   }
 
   onPrevious(): void {
