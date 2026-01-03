@@ -277,12 +277,34 @@ export class AuthService {
 
   /**
    * Initiate Google OAuth login
+   * Uses orchnest service for Google OAuth flow
    */
   loginWithGoogle(): void {
     if (!this.isBrowser) return;
 
-    const apiUrl = this.getOrchestratorUrl();
-    window.location.href = `${apiUrl}/auth/google`;
+    const hostname = window.location.hostname;
+    let googleAuthUrl: string;
+    let returnUrl: string;
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      // Local: Use proxy through /apg to orchnest
+      googleAuthUrl = '/apg/orchnest/auth/google';
+      returnUrl = `${window.location.origin}/auth/callback`;
+    } else if (hostname.includes('domyhomework')) {
+      // Production DMH: Go directly to orchestrator's orchnest endpoint
+      googleAuthUrl = 'https://orchestrator.learnbytesting.ai/orchnest/auth/google';
+      returnUrl = `${window.location.origin}/auth/callback`;
+    } else {
+      // Fallback to LBT orchestrator
+      googleAuthUrl = 'https://orchestrator.learnbytesting.ai/orchnest/auth/google';
+      returnUrl = `${window.location.origin}/auth/callback`;
+    }
+
+    // Pass the return URL so orchnest knows where to redirect after OAuth
+    const fullUrl = `${googleAuthUrl}?returnTo=${encodeURIComponent(returnUrl)}`;
+
+    console.log('[AuthService] Redirecting to Google OAuth:', fullUrl);
+    window.location.href = fullUrl;
   }
 
   /**
