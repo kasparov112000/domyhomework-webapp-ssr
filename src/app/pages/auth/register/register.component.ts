@@ -97,11 +97,12 @@ import { AuthService } from '../../../services/auth/auth.service';
             </button>
           </form>
 
-          <!-- Google Sign-up - Hidden until OAuth redirect is fixed -->
-          <!-- TODO: Uncomment when Google OAuth redirects back to domyhomework.com correctly
+          <!-- Divider -->
           <div class="divider">
             <span>or sign up with</span>
           </div>
+
+          <!-- Social Login -->
           <div class="social-login">
             <button class="btn btn-google" (click)="loginWithGoogle()">
               <svg viewBox="0 0 24 24" width="20" height="20">
@@ -113,7 +114,6 @@ import { AuthService } from '../../../services/auth/auth.service';
               Sign up with Google
             </button>
           </div>
-          -->
 
           <!-- Login Link -->
           <div class="auth-footer">
