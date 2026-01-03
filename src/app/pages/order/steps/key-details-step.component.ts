@@ -25,8 +25,8 @@ import {
       <form [formGroup]="form" class="details-form">
         <!-- Service Type -->
         <div class="form-section">
-          <h3>What do you need?</h3>
-          <div class="radio-cards">
+          <h3>What do you need? <span class="required">*</span></h3>
+          <div class="radio-cards" [class.error-group]="form.get('serviceType')?.invalid && form.get('serviceType')?.touched">
             @for (option of serviceOptions; track option.value) {
               <label
                 class="radio-card"
@@ -46,13 +46,19 @@ import {
               </label>
             }
           </div>
+          @if (form.get('serviceType')?.invalid && form.get('serviceType')?.touched) {
+            <span class="error-text">Please select a service type</span>
+          }
         </div>
 
         <!-- Academic Level -->
         <div class="form-section">
-          <h3>Academic Level</h3>
+          <h3>Academic Level <span class="required">*</span></h3>
           <div class="select-group">
-            <select formControlName="academicLevel">
+            <select
+              formControlName="academicLevel"
+              [class.error]="form.get('academicLevel')?.invalid && form.get('academicLevel')?.touched"
+            >
               <option value="" disabled>Select academic level</option>
               @for (option of academicOptions; track option.value) {
                 <option [value]="option.value">
@@ -60,19 +66,28 @@ import {
                 </option>
               }
             </select>
+            @if (form.get('academicLevel')?.invalid && form.get('academicLevel')?.touched) {
+              <span class="error-text">Please select an academic level</span>
+            }
           </div>
         </div>
 
         <!-- Subject Area -->
         <div class="form-section">
-          <h3>Subject Area</h3>
+          <h3>Subject Area <span class="required">*</span></h3>
           <div class="select-group">
-            <select formControlName="subjectArea">
+            <select
+              formControlName="subjectArea"
+              [class.error]="form.get('subjectArea')?.invalid && form.get('subjectArea')?.touched"
+            >
               <option value="" disabled>Select subject area</option>
               @for (subject of subjectAreas(); track subject.id) {
                 <option [value]="subject.id">{{ subject.name }}</option>
               }
             </select>
+            @if (form.get('subjectArea')?.invalid && form.get('subjectArea')?.touched) {
+              <span class="error-text">Please select a subject area</span>
+            }
           </div>
         </div>
 
@@ -102,8 +117,8 @@ import {
 
         <!-- Deadline -->
         <div class="form-section">
-          <h3>Deadline</h3>
-          <div class="deadline-options">
+          <h3>Deadline <span class="required">*</span></h3>
+          <div class="deadline-options" [class.error-group]="form.get('deadlineUrgency')?.invalid && form.get('deadlineUrgency')?.touched">
             @for (option of deadlineOptions; track option.value) {
               <label
                 class="deadline-option"
@@ -123,6 +138,9 @@ import {
               </label>
             }
           </div>
+          @if (form.get('deadlineUrgency')?.invalid && form.get('deadlineUrgency')?.touched) {
+            <span class="error-text">Please select a deadline</span>
+          }
           @if (calculatedDeadline()) {
             <p class="deadline-info">
               Due by: <strong>{{ calculatedDeadline() | date:'medium' }}</strong>
@@ -132,21 +150,27 @@ import {
 
         <!-- Paper Type -->
         <div class="form-section">
-          <h3>Paper Type</h3>
+          <h3>Paper Type <span class="required">*</span></h3>
           <div class="select-group">
-            <select formControlName="paperType">
+            <select
+              formControlName="paperType"
+              [class.error]="form.get('paperType')?.invalid && form.get('paperType')?.touched"
+            >
               <option value="" disabled>Select paper type</option>
               @for (option of paperTypeOptions; track option.value) {
                 <option [value]="option.value">{{ option.label }}</option>
               }
             </select>
+            @if (form.get('paperType')?.invalid && form.get('paperType')?.touched) {
+              <span class="error-text">Please select a paper type</span>
+            }
           </div>
         </div>
 
         <!-- Project Purpose -->
         <div class="form-section">
-          <h3>Purpose</h3>
-          <div class="radio-inline">
+          <h3>Purpose <span class="required">*</span></h3>
+          <div class="radio-inline" [class.error-group]="form.get('projectPurpose')?.invalid && form.get('projectPurpose')?.touched">
             @for (option of purposeOptions; track option.value) {
               <label class="radio-item">
                 <input
@@ -158,6 +182,9 @@ import {
               </label>
             }
           </div>
+          @if (form.get('projectPurpose')?.invalid && form.get('projectPurpose')?.touched) {
+            <span class="error-text">Please select a purpose</span>
+          }
         </div>
 
         <!-- Expert Preference -->
@@ -251,6 +278,30 @@ import {
       margin: 0 0 0.75rem 0;
     }
 
+    /* Required indicator */
+    .required {
+      color: #dc2626;
+      font-weight: 500;
+    }
+
+    /* Error text message */
+    .error-text {
+      display: block;
+      color: #dc2626;
+      font-size: 0.8125rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Error state for group elements (radio cards, deadline options) */
+    .error-group .radio-card .card-content,
+    .error-group .deadline-option .option-content {
+      border-color: #dc2626;
+    }
+
+    .radio-inline.error-group .radio-item span {
+      color: #dc2626;
+    }
+
     /* Radio Cards */
     .radio-cards {
       display: grid;
@@ -330,6 +381,16 @@ import {
       outline: none;
       border-color: #D04A02;
       box-shadow: 0 0 0 3px rgba(208, 74, 2, 0.1);
+    }
+
+    .select-group select.error {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    .select-group select.error:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
     }
 
     /* Number Input */
@@ -882,6 +943,9 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
         }
       });
     } else {
+      // Mark all fields as touched to trigger validation display
+      this.form.markAllAsTouched();
+      this.saveError.set('Please fill in all required fields');
       console.log('[KeyDetailsStep] Form invalid:', this.form.errors);
     }
   }

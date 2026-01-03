@@ -16,7 +16,7 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
       <form [formGroup]="form" class="instructions-form">
         <!-- Title -->
         <div class="form-section">
-          <label for="title">Paper Title</label>
+          <label for="title">Paper Title <span class="required">*</span></label>
           <input
             id="title"
             type="text"
@@ -31,7 +31,7 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
 
         <!-- Instructions -->
         <div class="form-section">
-          <label for="instructions">Detailed Instructions</label>
+          <label for="instructions">Detailed Instructions <span class="required">*</span></label>
           <textarea
             id="instructions"
             formControlName="instructions"
@@ -218,6 +218,12 @@ import { CITATION_STYLE_OPTIONS, UploadedDocument } from '../../../models/paper-
       font-size: 0.9375rem;
       font-weight: 600;
       color: #1f2937;
+    }
+
+    /* Required indicator */
+    .required {
+      color: #dc2626;
+      font-weight: 500;
     }
 
     .form-section input[type="text"],
@@ -743,6 +749,10 @@ export class InstructionsStepComponent implements OnInit, OnDestroy {
           console.error('Error saving instructions:', err);
         }
       });
+    } else {
+      // Mark all fields as touched to trigger validation display
+      this.form.markAllAsTouched();
+      this.saveError.set('Please fill in all required fields');
     }
   }
 }
