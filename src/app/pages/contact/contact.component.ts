@@ -163,15 +163,6 @@ interface FAQ {
             <a *ngIf="info.link" [href]="info.link">{{ info.content }}</a>
           </div>
 
-          <div class="social-card">
-            <h3>Follow Us</h3>
-            <div class="social-links">
-              <a href="#" class="social-link" title="Facebook">&#128101;</a>
-              <a href="#" class="social-link" title="Twitter">&#128038;</a>
-              <a href="#" class="social-link" title="Instagram">&#128247;</a>
-              <a href="#" class="social-link" title="LinkedIn">&#128188;</a>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -517,41 +508,6 @@ interface FAQ {
       color: #D04A02;
     }
 
-    .social-card {
-      background: linear-gradient(135deg, #31393F 0%, #3A434A 100%);
-      padding: 1.5rem;
-      border-radius: 12px;
-      color: white;
-    }
-
-    .social-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .social-link {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      font-size: 1.25rem;
-      transition: all 0.2s ease;
-    }
-
-    .social-link:hover {
-      background: #D04A02;
-      transform: translateY(-2px);
-    }
-
     /* Section Styles */
     .section-label {
       display: inline-block;
@@ -844,10 +800,6 @@ interface FAQ {
       .btn-cta-secondary {
         width: 100%;
       }
-
-      .social-links {
-        justify-content: center;
-      }
     }
   `]
 })
@@ -864,8 +816,8 @@ export class ContactComponent implements OnInit {
     {
       icon: '&#128231;',
       title: 'Email Us',
-      content: 'support@learnbytesting.ai',
-      link: 'mailto:support@learnbytesting.ai'
+      content: 'support@domyhomework.com',
+      link: 'mailto:support@domyhomework.com'
     },
     {
       icon: '&#128222;',

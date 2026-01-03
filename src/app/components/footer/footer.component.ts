@@ -34,7 +34,6 @@ import { CommonModule } from '@angular/common';
           <div class="footer-section">
             <h4>Connect</h4>
             <p>Email: info&#64;domyhomework.com</p>
-            <p>Follow us on social media</p>
           </div>
         </div>
 
