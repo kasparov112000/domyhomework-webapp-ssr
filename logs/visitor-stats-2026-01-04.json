@@ -1,24 +1,23 @@
 {
   "date": "2026-01-04",
-  "totalVisits": 10,
+  "totalVisits": 20,
   "pageViews": {
-    "/": 1,
-    "/apg/orchnest/user/login": 1,
-    "/order": 4,
-    "/api/users/session/current": 4
+    "/order": 8,
+    "/api/users/session/current": 10,
+    "/en/us/account-management/sweepstakes": 2
   },
   "browsers": {
-    "Chrome": 10
+    "Chrome": 20
   },
   "operatingSystems": {
-    "Windows": 10
+    "Windows": 20
   },
   "countries": {},
   "topReferers": {
-    "http://localhost:4202/auth/login": 1,
-    "http://localhost:4202/order": 4
+    "http://localhost:4202/order": 8,
+    "http://localhost:4202/en/us/account-management/sweepstakes": 2
   },
-  "averageResponseTime": 27.5,
+  "averageResponseTime": 20.25,
   "errorCount": 0,
   "uniqueVisitorCount": 1
 }
