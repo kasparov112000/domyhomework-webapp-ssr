@@ -300,12 +300,24 @@ export class PricingService {
 
     this._isLoading.set(true);
 
+    console.log('[PricingService] Loading config from:', `${this.baseUrl}/pricing-config`);
     this.pricingConfig$ = this.http.get<ApiResponse<PricingConfig>>(
       `${this.baseUrl}/pricing-config`,
       { headers: this.getHeaders() }
     ).pipe(
       map(response => {
+        console.log('[PricingService] Config response:', response);
         if (response.success && response.result) {
+          console.log('[PricingService] Dynamic options loaded:',
+            'serviceTypes:', response.result.serviceTypeOptions?.length || 0,
+            'academicLevels:', response.result.academicLevelOptions?.length || 0,
+            'deadlines:', response.result.deadlineOptions?.length || 0,
+            'paperTypes:', response.result.paperTypeOptions?.length || 0,
+            'extras:', response.result.extras?.length || 0,
+            'freeIncludes:', response.result.freeIncludes?.length || 0
+          );
+          console.log('[PricingService] Service type options:', response.result.serviceTypeOptions);
+          console.log('[PricingService] Extras:', response.result.extras);
           this._config.set(response.result);
           this._isLoading.set(false);
           return response.result;

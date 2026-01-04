@@ -153,6 +153,14 @@ export interface PricingConfig {
   active: boolean;
   createdDate?: Date;
   modifiedDate?: Date;
+
+  // Dynamic form options (from order-form-options.model.ts)
+  serviceTypeOptions?: any[];
+  academicLevelOptions?: any[];
+  deadlineOptions?: any[];
+  paperTypeOptions?: any[];
+  projectPurposeOptions?: any[];
+  citationStyleOptions?: any[];
 }
 
 // ===== SUBMISSION INTERFACE =====

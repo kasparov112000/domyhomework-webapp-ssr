@@ -1,0 +1,24 @@
+{
+  "date": "2026-01-04",
+  "totalVisits": 10,
+  "pageViews": {
+    "/": 1,
+    "/apg/orchnest/user/login": 1,
+    "/order": 4,
+    "/api/users/session/current": 4
+  },
+  "browsers": {
+    "Chrome": 10
+  },
+  "operatingSystems": {
+    "Windows": 10
+  },
+  "countries": {},
+  "topReferers": {
+    "http://localhost:4202/auth/login": 1,
+    "http://localhost:4202/order": 4
+  },
+  "averageResponseTime": 27.5,
+  "errorCount": 0,
+  "uniqueVisitorCount": 1
+}

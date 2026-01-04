@@ -902,7 +902,7 @@ export class KeyDetailsStepComponent implements OnInit, OnDestroy {
     return this.pricingService.getBasePriceForLevel(level);
   }
 
-  getServiceMultiplierText(type: ServiceType): string | null {
+  getServiceMultiplierText(type: string): string | null {
     const multiplier = this.pricingService.getServiceTypeMultiplierFromOptions(type);
     if (multiplier < 1) {
       const savings = Math.round((1 - multiplier) * 100);
