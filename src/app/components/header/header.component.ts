@@ -33,11 +33,11 @@ import { AuthService } from '../../services/auth/auth.service';
             <li><a routerLink="/about" routerLinkActive="active" (click)="closeMobileMenu()">About</a></li>
             <li><a routerLink="/pricing" routerLinkActive="active" (click)="closeMobileMenu()">Pricing</a></li>
             <li><a routerLink="/contact" routerLinkActive="active" (click)="closeMobileMenu()">Contact</a></li>
+            <li><a routerLink="/order" [queryParams]="{new: 'true'}" class="btn-cta" (click)="closeMobileMenu()">Get Started</a></li>
 
             <!-- Auth buttons -->
             <ng-container *ngIf="!authService.isAuthenticated(); else loggedInTemplate">
               <li><a routerLink="/auth/login" class="nav-link-auth" (click)="closeMobileMenu()">Sign In</a></li>
-              <li><a routerLink="/order" class="btn btn-primary" (click)="closeMobileMenu()">Get Started</a></li>
             </ng-container>
 
             <ng-template #loggedInTemplate>
@@ -240,6 +240,46 @@ import { AuthService } from '../../services/auth/auth.service';
       font-weight: 600 !important;
     }
 
+    .btn-cta {
+      background: linear-gradient(135deg, #D04A02 0%, #B03902 100%);
+      color: white !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: 50px;
+      font-weight: 700 !important;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(208, 74, 2, 0.4);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-cta:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 20px rgba(208, 74, 2, 0.5);
+      color: white !important;
+    }
+
+    .btn-cta:hover::before {
+      left: 100%;
+    }
+
+    .btn-cta::after {
+      display: none !important;
+    }
+
     .nav-icon {
       font-size: 18px;
       vertical-align: middle;
@@ -439,6 +479,12 @@ import { AuthService } from '../../services/auth/auth.service';
         text-align: center;
         background: rgba(208, 74, 2, 0.1);
         margin-top: 0.5rem;
+      }
+
+      .nav-links .btn-cta {
+        display: block;
+        text-align: center;
+        margin: 0.5rem 0;
       }
 
       .user-menu {

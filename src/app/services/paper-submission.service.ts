@@ -236,7 +236,7 @@ export class PaperSubmissionService {
         }
 
         this.updateStepperState({
-          currentStep: Math.max(stepNumber + 1, this._stepperState().currentStep),
+          // Don't auto-advance currentStep here - let the component call nextStep()
           completedSteps,
           lastSavedAt: new Date(),
           isSaving: false

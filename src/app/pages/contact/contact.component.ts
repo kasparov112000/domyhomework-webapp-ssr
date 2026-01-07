@@ -820,11 +820,6 @@ export class ContactComponent implements OnInit {
       link: 'mailto:support@domyhomework.com'
     },
     {
-      icon: '&#128222;',
-      title: 'Live Chat',
-      content: 'Available 24/7 for your convenience'
-    },
-    {
       icon: '&#128337;',
       title: 'Response Time',
       content: 'Within 24 hours on business days'

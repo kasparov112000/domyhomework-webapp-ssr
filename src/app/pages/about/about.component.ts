@@ -125,26 +125,6 @@ interface TeamMember {
       </div>
     </section>
 
-    <!-- Team Section -->
-    <section class="team-section">
-      <div class="section-header">
-        <span class="section-label">Leadership</span>
-        <h2>Meet Our Team</h2>
-        <p>The passionate people behind DoMyHomework.com</p>
-      </div>
-
-      <div class="team-grid">
-        <div class="team-card" *ngFor="let member of teamMembers">
-          <div class="member-avatar">
-            <span>{{ member.initials }}</span>
-          </div>
-          <h3>{{ member.name }}</h3>
-          <span class="member-role">{{ member.role }}</span>
-          <p>{{ member.bio }}</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Why Choose Us Section -->
     <section class="why-section">
       <div class="why-content">
